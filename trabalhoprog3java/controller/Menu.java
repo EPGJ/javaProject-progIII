@@ -1,4 +1,5 @@
-package trabalhoprog3java;
+package trabalhoprog3java.controller;
+
 import java.io.Serializable;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -16,14 +17,13 @@ import trabalhoprog3java.domain.activity.Lesson;
 import trabalhoprog3java.domain.activity.Student;
 import trabalhoprog3java.domain.activity.Test;
 import trabalhoprog3java.domain.activity.Work;
-import trabalhoprog3java.domain.activity.study.Material;
-import trabalhoprog3java.domain.activity.study.Study;
+import trabalhoprog3java.domain.study.Material;
+import trabalhoprog3java.domain.study.Study;
+import trabalhoprog3java.exception.NotCharException;
+import trabalhoprog3java.exception.InputMismatchException;
 
-public class Menu implements Serializable{
+public class Menu implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	Map<String, Period> periods = new HashMap<>();
 	Map<String, Discipline> disciplines = new HashMap<>();
@@ -38,10 +38,8 @@ public class Menu implements Serializable{
 		System.out.printf("\n\tMENU\n" + "1 - Cadastro de períodos \n" + "2 - Cadastro de docentes  \n"
 				+ "3 - Cadastro de disciplinas \n" + "4 - Cadastro de estudantes \n"
 				+ "5 - Matrícula de estudantes em disciplinas \n" + "6 - Cadastro de atividades de disciplina \n"
-				+ "7 - Avaliação de atividade por parte de estudante \n" + "8 - Relatorios \n"
-				+ "9 - Salvar \n"
-				+ "10 - Carregar \n"
-				+ "11 - Sair do programa \n" + "Entre com a sua opcao: ");
+				+ "7 - Avaliação de atividade por parte de estudante \n" + "8 - Relatorios \n" + "9 - Salvar \n"
+				+ "10 - Carregar \n" + "11 - Sair do programa \n" + "Entre com a sua opcao: ");
 	}
 
 	public void printItemOptions(String items) {
@@ -65,6 +63,7 @@ public class Menu implements Serializable{
 		}
 
 	}
+
 	public void listTeachers() {
 		if (teachers.size() > 0) {
 			System.out.println("\n\nDocentes cadastrados: ");
@@ -73,24 +72,39 @@ public class Menu implements Serializable{
 		}
 	}
 
-	public void periodRegister(Scanner input) {
+	public void periodRegister(Scanner input) throws NotCharException, InputMismatchException {
 		listPeriods();
 		printItemOptions("Registrar novo periodo\n");
 
 		int userDecision = input.nextInt();
 		input.nextLine();
 		if (userDecision == 1) {
-			System.out.printf("\nAno: ");
-			int year = input.nextInt();
+			String line;
+			int year=0;
+			System.out.printf("\nAnos: ");
+			if(input.hasNext()) {				
+				year = input.nextInt();
+			}else {				
+				line = input.next();
+				throw new InputMismatchException(line);
+			}
+			
 			input.nextLine();
 
 			System.out.printf("Semestre: ");
-			char semester = input.next().charAt(0);
+			line = input.next();
+
+			if (line.length() > 1) {
+				throw new NotCharException(line);				
+			}
+
+			char semester = line.charAt(0);
 			input.nextLine();
 
 			Period newPeriod = new Period(year, semester);
 			periods.put(newPeriod.getPeriodReference(), newPeriod);
 			System.out.println("Sucesso ao cadastrar novo periodo");
+
 		}
 	}
 
@@ -155,10 +169,9 @@ public class Menu implements Serializable{
 			String responsableTeacher = input.nextLine();
 
 			Period period = periods.get(periodReference);
-			if(period !=null) {
+			if (period != null) {
 				System.out.println("achou");
-			}
-			else{
+			} else {
 				System.out.println("nao achou");
 			}
 			Discipline newDiscipline = new Discipline(code, name, period, teachers.get(responsableTeacher));
@@ -210,7 +223,7 @@ public class Menu implements Serializable{
 			String disciplinePeriod = input.nextLine();
 
 			Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, disciplines);
-			
+
 			if (discipline == null)
 				System.out.println("disciplina nao encontrada");
 			else {
@@ -218,8 +231,7 @@ public class Menu implements Serializable{
 				if (student != null) {
 					discipline.enrollStudent(student);
 					System.out.println("Sucesso ao matricular estudante");
-				}
-				else {
+				} else {
 					System.out.println("Erro ao matricular estudante");
 				}
 			}
@@ -302,14 +314,13 @@ public class Menu implements Serializable{
 
 		System.out.printf("horario da aula ( HH:MM ): ");
 		String time = input.nextLine();
-        
+
 		System.out.println("passou1");
 		Lesson newLesson = new Lesson(name, disciplineCode, date, time);
 		System.out.println("passou2");
 		Discipline discipline = this.util.findDiscipline(disciplineCode, disciplinePeriod, this.disciplines);
 		System.out.println("passou3");
 
-		
 		if (discipline != null) {
 			System.out.println("passou4");
 			discipline.setActivity(newLesson);
@@ -459,9 +470,8 @@ public class Menu implements Serializable{
 			System.out.println("\n\n\tEstatisticas dos docentes");
 			System.out.println("\nPROFESSORES: \n");
 
-			
 			if (teachers.size() > 0) {
-				for(Map.Entry<String, Teacher> teacher : teachers.entrySet()) {
+				for (Map.Entry<String, Teacher> teacher : teachers.entrySet()) {
 					teacher.getValue().findAssociatedDisciplines(disciplines);
 					report.teachersReport(teacher.getValue());
 				}
@@ -474,9 +484,8 @@ public class Menu implements Serializable{
 			System.out.println("\n\n\tEstatisticas dos estudantes");
 			System.out.println("\nEstudantes: \n");
 
-			
 			if (students.size() > 0) {
-				for(Entry<Integer, Student> student : students.entrySet()) {
+				for (Entry<Integer, Student> student : students.entrySet()) {
 					student.getValue().findAssociatedDisciplines(disciplines);
 					report.studentsReport(student.getValue());
 				}
@@ -486,19 +495,19 @@ public class Menu implements Serializable{
 			break;
 
 		case 4:
-			
+
 			listTeachers();
 			System.out.println("Digite o login institucional do docente: ");
 			String teacherReference = input.nextLine();
 			Teacher teacher = teachers.get(teacherReference);
-			if(teacher!=null) {
-				
+			if (teacher != null) {
+
 				report.teachersDisciplinesReport(teacher);
 				System.out.println("\n precione qualquer tecla para continuar: ");
 				input.nextInt();
-				
+
 			}
-			
+
 			break;
 
 		}
@@ -506,5 +515,3 @@ public class Menu implements Serializable{
 	}
 
 }
-
-

@@ -1,4 +1,4 @@
-package trabalhoprog3java;
+package trabalhoprog3java.controller;
 import java.util.Map;
 import java.util.Scanner;
 

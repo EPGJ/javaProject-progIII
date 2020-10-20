@@ -1,4 +1,4 @@
-package trabalhoprog3java.domain.activity.study;
+package trabalhoprog3java.domain.study;
 import java.util.ArrayList;
 import java.util.List;
 

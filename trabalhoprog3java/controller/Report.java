@@ -1,4 +1,4 @@
-package trabalhoprog3java;
+package trabalhoprog3java.controller;
 import java.io.Serializable;
 
 import trabalhoprog3java.domain.Discipline;

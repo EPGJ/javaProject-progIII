@@ -1,6 +1,12 @@
 package trabalhoprog3java;
 
 import java.util.Scanner;
+
+import trabalhoprog3java.controller.Menu;
+import trabalhoprog3java.controller.Utils;
+import trabalhoprog3java.exception.NotCharException;
+
+import java.util.InputMismatchException;
 import java.util.Locale;
 
 
@@ -22,7 +28,16 @@ public class Main {
             switch (option) {
        
                 case 1:
-                	menu.periodRegister(input);
+                	
+                	try {
+                    	menu.periodRegister(input);
+                	}catch(InputMismatchException e) {
+                		System.out.println(e);
+                		input.nextLine();
+                	}catch(NotCharException e) {
+                		System.out.println(e);
+                	}
+                	
                 	break;
       
                 case 2:
