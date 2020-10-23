@@ -1,6 +1,8 @@
 package trabalhoprog3java.exception;
 
-public class NotCharException extends Exception {
+import java.io.Serializable;
+
+public class NotCharException extends Exception  implements Serializable  {
 
 	public NotCharException(String line){
 		super("Dado inválido: " + line);

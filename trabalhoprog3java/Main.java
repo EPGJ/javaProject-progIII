@@ -4,9 +4,7 @@ import java.util.Scanner;
 
 import trabalhoprog3java.controller.Menu;
 import trabalhoprog3java.controller.Utils;
-import trabalhoprog3java.exception.NotCharException;
 
-import java.util.InputMismatchException;
 import java.util.Locale;
 
 
@@ -28,16 +26,7 @@ public class Main {
             switch (option) {
        
                 case 1:
-                	
-                	try {
-                    	menu.periodRegister(input);
-                	}catch(InputMismatchException e) {
-                		System.out.println(e);
-                		input.nextLine();
-                	}catch(NotCharException e) {
-                		System.out.println(e);
-                	}
-                	
+                	menu.periodRegister(input);
                 	break;
       
                 case 2:
@@ -77,7 +66,7 @@ public class Main {
                 default:
                     break;
             }
-            util.cleanConsole();
+//            util.cleanConsole();
         } while (option != 11);
         input.close();
     }

@@ -20,6 +20,7 @@ import trabalhoprog3java.domain.activity.Work;
 import trabalhoprog3java.domain.study.Material;
 import trabalhoprog3java.domain.study.Study;
 import trabalhoprog3java.exception.NotCharException;
+import trabalhoprog3java.exception.ReferenceAlredyExistsException;
 import trabalhoprog3java.exception.InputMismatchException;
 
 public class Menu implements Serializable {
@@ -32,7 +33,8 @@ public class Menu implements Serializable {
 	List<Activity> activities = new ArrayList<>();
 	Utils util = new Utils();
 	Report report = new Report();
-	transient Scanner input = new Scanner(System.in);
+	Scanner input = new Scanner(System.in);
+	ReadData readData = new ReadData(input);
 
 	public void printMenuOptions() {
 		System.out.printf("\n\tMENU\n" + "1 - Cadastro de períodos \n" + "2 - Cadastro de docentes  \n"
@@ -72,39 +74,40 @@ public class Menu implements Serializable {
 		}
 	}
 
-	public void periodRegister(Scanner input) throws NotCharException, InputMismatchException {
-		listPeriods();
-		printItemOptions("Registrar novo periodo\n");
+	public void periodRegister(Scanner input) {
+		try {
 
-		int userDecision = input.nextInt();
-		input.nextLine();
-		if (userDecision == 1) {
-			String line;
-			int year=0;
-			System.out.printf("\nAnos: ");
-			if(input.hasNext()) {				
-				year = input.nextInt();
-			}else {				
-				line = input.next();
-				throw new InputMismatchException(line);
-			}
+			listPeriods();
+			printItemOptions("Registrar novo periodo\n");
+			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
 			
-			input.nextLine();
+			if (userDecision == 1) {
+				String line;
+				System.out.printf("\nAno: ");
+				int year = readData.readYear();
+				
+				if(year != -1) { 
+					
+					System.out.printf("Semestre: ");
+					char semester = readData.readSemester();
+					
+					if(semester != 0) {
+						
+						Period period = new Period(year, semester);
 
-			System.out.printf("Semestre: ");
-			line = input.next();
-
-			if (line.length() > 1) {
-				throw new NotCharException(line);				
+						if (periods.get(period.getPeriodReference()) != null) {
+							throw new ReferenceAlredyExistsException(period.getPeriodReference());
+						}
+						periods.put(period.getPeriodReference(), period);
+						System.out.println("Sucesso ao cadastrar novo periodo");
+					}
+				}
 			}
-
-			char semester = line.charAt(0);
-			input.nextLine();
-
-			Period newPeriod = new Period(year, semester);
-			periods.put(newPeriod.getPeriodReference(), newPeriod);
-			System.out.println("Sucesso ao cadastrar novo periodo");
-
+		} catch (ReferenceAlredyExistsException e) {
+			System.out.println(e);
+		}
+		catch(NumberFormatException e) {
+			
 		}
 	}
 
@@ -112,8 +115,7 @@ public class Menu implements Serializable {
 		listTeachers();
 		printItemOptions("Registrar novo professor\n");
 
-		int userDecision = input.nextInt();
-		input.nextLine();
+		int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
 		if (userDecision == 1) {
 
 			System.out.printf("\nLogin: ");
