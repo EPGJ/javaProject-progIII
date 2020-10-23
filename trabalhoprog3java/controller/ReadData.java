@@ -1,7 +1,9 @@
 package trabalhoprog3java.controller;
 
+
 import java.util.Scanner;
 
+import trabalhoprog3java.exception.InputMismatchException;
 import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.NotAnOptionException;
 import trabalhoprog3java.exception.NotCharException;
@@ -27,7 +29,7 @@ public class ReadData {
 		}catch(NumberFormatException e) {
 			System.out.println("O valor informado nao eh inteiro: " + line);
 		}catch(NotAnOptionException e) {
-			System.out.println(e);
+			System.out.println(e.getMessage());
 		}
 		return 0;
 	}
@@ -57,14 +59,12 @@ public class ReadData {
 			}
 			return line.charAt(0);
 		}catch(NotCharException e) {
-			System.out.println(e);
+			System.out.println(e.getMessage());
 		}
 		
 		return 0;	
 	}
-	public String readString() {
-		return input.next();
-	}
+
 	
 	public boolean readResponse() {
 		char response =  readChar();
@@ -77,18 +77,39 @@ public class ReadData {
 	}
 	public String readLogin() {
 		try {
-			String login = readString();
-			System.out.println(login.split(".").length+"ASDASDASDASDASDASDASqweqwew");
-			if(login.split(".").length != 2) {
+			String login = input.next();
+			if(login.split("[.]").length != 2) {
 				throw new InvalidReferenceException(login);
 			}
 			return login;
 		}catch(InvalidReferenceException e) {
-			System.out.println(e);
-			return "invalid";
+			System.out.println(e.getMessage());
+			
 		}
 		
-		
+		return "invalid";
+	}
+	public String readPeriod(){
+		try {
+			String period = input.next();
+			if(period.split("/").length != 2) {
+				throw new InvalidReferenceException(period);
+			}
+			return period;	
+		}catch(InvalidReferenceException e) {
+			System.out.println(e.getMessage());
+		}
+		return "invalid";
+	}
+	public Integer readInt() {
+		int number = -1 ;
+		String line = input.next();; 
+		try {
+			number = Integer.parseInt(line);
+		}catch(NumberFormatException e) {
+			System.out.println("O valor informado nao eh inteiro: " + line );
+		}
+		return number;
 	}
 
 }

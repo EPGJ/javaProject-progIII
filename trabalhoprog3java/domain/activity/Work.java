@@ -1,6 +1,8 @@
 package trabalhoprog3java.domain.activity;
 import java.util.Date;
 
+import trabalhoprog3java.domain.Discipline;
+
 
 public class Work extends Activity {
 		
@@ -8,7 +10,7 @@ public class Work extends Activity {
 	private int maxNumber;
 
 	
-	public Work(String name, String discipline,String deadline, int maxNumber, double workLoad) {
+	public Work(String name, Discipline discipline,String deadline, int maxNumber, double workLoad) {
 		super(name, discipline, true,false, workLoad);
 		this.maxNumber = maxNumber;
 		this.deadline = deadline;

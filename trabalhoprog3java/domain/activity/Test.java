@@ -1,13 +1,15 @@
 package trabalhoprog3java.domain.activity;
 import java.util.Date;
 
+import trabalhoprog3java.domain.Discipline;
+
 
 public class Test extends Activity {
 	private String date;
 	private String time;
 	private String testContent;
 	
-	public Test(String name, String discipline, String date, String time, String testContent) {
+	public Test(String name, Discipline discipline, String date, String time, String testContent) {
 		super(name, discipline,true,true);
 		this.date = date;
 		this.time = time;

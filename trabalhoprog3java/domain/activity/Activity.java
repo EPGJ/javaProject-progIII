@@ -4,18 +4,20 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import trabalhoprog3java.domain.Discipline;
+
 
 abstract public class Activity implements Serializable {
 
 	private String name;
     private boolean synchronous;
-    private String discipline;
+    private Discipline discipline;
     private int activityNumber;
     private List<ActivityRating> studentsRating = new ArrayList<>();
     private double workLoad;
     private boolean isAvaliative;
 
-    public Activity(String name, String discipline,boolean isAvaliative, boolean synchronous,double workLoad) {
+    public Activity(String name, Discipline discipline,boolean isAvaliative, boolean synchronous,double workLoad) {
     	this.name = name;
         this.synchronous = synchronous;
         this.discipline = discipline;
@@ -23,11 +25,11 @@ abstract public class Activity implements Serializable {
     	this.isAvaliative= isAvaliative;
     }
 
-    public Activity(String name, String discipline,boolean isAvaliative, boolean synchronous) {
+    public Activity(String name, Discipline discipline,boolean isAvaliative, boolean synchronous) {
     	this(name,discipline,isAvaliative,synchronous,2.0);
     }
 
-    public Activity(String name, String discipline,boolean isAvaliative) {
+    public Activity(String name, Discipline discipline,boolean isAvaliative) {
         this(name, discipline,isAvaliative, false,2.0);
     }
 
@@ -47,11 +49,11 @@ abstract public class Activity implements Serializable {
         this.synchronous = synchronous;
     }
 
-    public String getDiscipline() {
+    public Discipline getDiscipline() {
         return discipline;
     }
 
-    public void setDiscipline(String dicipline) {
+    public void setDiscipline(Discipline dicipline) {
         this.discipline = dicipline;
     }
 

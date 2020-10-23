@@ -2,6 +2,8 @@ package trabalhoprog3java.domain.activity;
 
 import java.util.Date;
 
+import trabalhoprog3java.domain.Discipline;
+
 public class Lesson extends Activity {
 	
 	private String date;
@@ -9,7 +11,7 @@ public class Lesson extends Activity {
 	private int maxPeopleQuantity;
 	private double  workload;
 	
-	public Lesson(String name, String discipline, String date, String time) {
+	public Lesson(String name, Discipline discipline, String date, String time) {
 		super(name, discipline,false,true);
 		this.date = date;
 		this.time = time;

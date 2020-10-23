@@ -46,15 +46,15 @@ public class Main {
                     break;
 
                 case 6:
-                	menu.activityRegister(input);
+//                	menu.activityRegister(input);
                     break;
 
                 case 7:
-                	menu.activityRating(input);
+//                	menu.activityRating(input);
                     break;
                 
                 case 8:
-                    menu.report(input);
+//                    menu.report(input);
                     break;
                 case 9:
                     util.serialize(menu, input);
