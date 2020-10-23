@@ -2,6 +2,7 @@ package trabalhoprog3java.controller;
 
 import java.util.Scanner;
 
+import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.NotAnOptionException;
 import trabalhoprog3java.exception.NotCharException;
 
@@ -47,7 +48,7 @@ public class ReadData {
 		}
 		return -1;
 	}
-	public char readSemester() {
+	public char readChar() {
 		String line = input.next();
 
 		try {
@@ -60,6 +61,34 @@ public class ReadData {
 		}
 		
 		return 0;	
+	}
+	public String readString() {
+		return input.next();
+	}
+	
+	public boolean readResponse() {
+		char response =  readChar();
+		if(response == 'S' || response == 's') {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	public String readLogin() {
+		try {
+			String login = readString();
+			System.out.println(login.split(".").length+"ASDASDASDASDASDASDASqweqwew");
+			if(login.split(".").length != 2) {
+				throw new InvalidReferenceException(login);
+			}
+			return login;
+		}catch(InvalidReferenceException e) {
+			System.out.println(e);
+			return "invalid";
+		}
+		
+		
 	}
 
 }

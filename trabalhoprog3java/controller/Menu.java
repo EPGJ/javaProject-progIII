@@ -19,9 +19,8 @@ import trabalhoprog3java.domain.activity.Test;
 import trabalhoprog3java.domain.activity.Work;
 import trabalhoprog3java.domain.study.Material;
 import trabalhoprog3java.domain.study.Study;
-import trabalhoprog3java.exception.NotCharException;
 import trabalhoprog3java.exception.ReferenceAlredyExistsException;
-import trabalhoprog3java.exception.InputMismatchException;
+
 
 public class Menu implements Serializable {
 
@@ -80,19 +79,19 @@ public class Menu implements Serializable {
 			listPeriods();
 			printItemOptions("Registrar novo periodo\n");
 			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
-			
+
 			if (userDecision == 1) {
 				String line;
 				System.out.printf("\nAno: ");
 				int year = readData.readYear();
-				
-				if(year != -1) { 
-					
+
+				if (year != -1) {
+
 					System.out.printf("Semestre: ");
-					char semester = readData.readSemester();
-					
-					if(semester != 0) {
-						
+					char semester = readData.readChar();
+
+					if (semester != 0) {
+
 						Period period = new Period(year, semester);
 
 						if (periods.get(period.getPeriodReference()) != null) {
@@ -106,43 +105,52 @@ public class Menu implements Serializable {
 		} catch (ReferenceAlredyExistsException e) {
 			System.out.println(e);
 		}
-		catch(NumberFormatException e) {
-			
-		}
 	}
 
 	public void teacherRegister(Scanner input) {
-		listTeachers();
-		printItemOptions("Registrar novo professor\n");
+		try {
+			listTeachers();
+			printItemOptions("Registrar novo professor\n");
 
-		int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
-		if (userDecision == 1) {
+			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
+			if (userDecision == 1) {
 
-			System.out.printf("\nLogin: ");
-			String login = input.nextLine();
+				System.out.printf("\nLogin: ");
+				String login = readData.readLogin();
+				
+				if(login != "invalid") {
+					System.out.printf("Nome Completo: ");
+					String fullName = readData.readString();
 
-			System.out.printf("Nome Completo: ");
-			String fullName = input.nextLine();
+					System.out.printf("Deseja adicionar pagina web?(S/N): ");
+					boolean positiveResponse = readData.readResponse();
 
-			System.out.printf("Deseja adicionar pagina web?(S/N): ");
-			char response = input.next().charAt(0);
-			input.nextLine();
+					if (positiveResponse) {
 
-			if (response == 'S' || response == 's') {
+						System.out.printf("Pagina Web: ");
+						String webPage = readData.readString();
 
-				System.out.printf("Pagina Web: ");
-				String webPage = input.nextLine();
+						Teacher teacher = new Teacher(login, fullName, webPage);
+						if (teachers.get(teacher.getTeacherReference()) != null) {
+							throw new ReferenceAlredyExistsException(teacher.getTeacherReference());
+						}
+						teachers.put(teacher.getTeacherReference(), teacher);
 
-				Teacher newTeacher = new Teacher(login, fullName, webPage);
-				teachers.put(newTeacher.getTeacherReference(), newTeacher);
+					} else {
+						Teacher teacher = new Teacher(login, fullName);
+						if (teachers.get(teacher.getTeacherReference()) != null) {
+							throw new ReferenceAlredyExistsException(teacher.getTeacherReference());
+						}
+						teachers.put(teacher.getTeacherReference(), teacher);
+					}
 
-			} else {
-				Teacher newTeacher = new Teacher(login, fullName);
-				teachers.put(newTeacher.getTeacherReference(), newTeacher);
+					System.out.println("Sucesso ao cadastrar novo Professor");
+				}				
 			}
-
-			System.out.println("Sucesso ao cadastrar novo Professor");
+		} catch (ReferenceAlredyExistsException e) {
+			System.out.println(e);
 		}
+
 	}
 
 	public void disciplineRegister(Scanner input) {
