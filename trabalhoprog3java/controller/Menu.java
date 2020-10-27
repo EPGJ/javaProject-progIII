@@ -19,6 +19,7 @@ import trabalhoprog3java.domain.activity.Test;
 import trabalhoprog3java.domain.activity.Work;
 import trabalhoprog3java.domain.study.Material;
 import trabalhoprog3java.domain.study.Study;
+import trabalhoprog3java.exception.ActivityAlreadyEvaluatedException;
 import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.ReferenceAlredyExistsException;
 
@@ -33,11 +34,11 @@ public class Menu implements Serializable {
 	Utils util;
 	Report report;
 	ReadData readData;
-	
+
 	public Menu(ReadData readData) {
 		this.readData = readData;
 		this.util = new Utils(readData);
-		this.report  = new Report();
+		this.report = new Report();
 	}
 
 	public void printMenuOptions() {
@@ -52,7 +53,6 @@ public class Menu implements Serializable {
 		String[] itemOptions = items.split("\n");
 		int i = 1;
 
-		
 		System.out.printf("\n\n\t SUBMENU\n");
 
 		for (String item : itemOptions) {
@@ -78,7 +78,7 @@ public class Menu implements Serializable {
 
 		}
 	}
-	
+
 	public void listTeachers() {
 		if (teachers.size() > 0) {
 			System.out.println("\n\nDocentes cadastrados: ");
@@ -95,14 +95,14 @@ public class Menu implements Serializable {
 
 		}
 	}
-	
+
 	public void listActivities() {
 		if (!activities.isEmpty()) {
 			System.out.println("\n\nAtividades cadastradas: ");
 			activities.forEach(activity -> System.out.println(activity.getActivityData()));
 		}
 	}
-	
+
 	public void periodRegister() {
 		try {
 			listPeriods();
@@ -130,8 +130,7 @@ public class Menu implements Serializable {
 					}
 				}
 			}
-			
-			
+
 		} catch (ReferenceAlredyExistsException e) {
 			System.out.println(e.getMessage());
 		}
@@ -147,9 +146,8 @@ public class Menu implements Serializable {
 				System.out.printf("\nLogin: ");
 				String login = readData.readLogin();
 
-				
 				if (login != "invalid") {
-					
+
 					System.out.printf("Nome Completo: ");
 					String fullName = readData.readString();
 					System.out.printf("Deseja adicionar pagina web? \n1 - Sim\n2 - Nao\nDigite sua escolha: ");
@@ -159,7 +157,6 @@ public class Menu implements Serializable {
 
 						System.out.printf("Pagina Web: ");
 						String webPage = readData.readString();
-						
 
 						Teacher teacher = new Teacher(login, fullName, webPage);
 						if (teachers.get(teacher.getTeacherReference()) != null) {
@@ -466,7 +463,6 @@ public class Menu implements Serializable {
 				System.out.println("\nDeseja cadastrar outro material?\n1 - Sim\n2 - Nao\nDigite sua escolha: ");
 				option = readData.readInt();
 
-
 			} while (option == 1);
 
 			Study study = new Study(name, discipline, materials);
@@ -491,39 +487,63 @@ public class Menu implements Serializable {
 	}
 
 	public void activityRating() {
-		printItemOptions("Avaliar atividade\n");
-		int userDecision = readData.readUserDecision(2); // o usuario possui cinco opcoes de escolha
+		try {
+			printItemOptions("Avaliar atividade\n");
+			int userDecision = readData.readUserDecision(2); // o usuario possui cinco opcoes de escolha
 
-		if (userDecision == 1) {
+			if (userDecision == 1) {
 
-			System.out.printf("\nCodigo de matricula do estudante: ");
-			int studentCode = readData.readInt();
+				System.out.printf("\nCodigo de matricula do estudante: ");
+				int studentCode = readData.readInt();
 
+				System.out.printf("Codigo da disciplina: ");
+				String disciplineCode = readData.readString();
 
-			System.out.printf("Codigo da disciplina: ");
-			String disciplineCode = readData.readString();
+				System.out.printf("Periodo da disciplina: ");
+				String disciplinePeriod = readData.readString();
 
-			System.out.printf("Periodo da disciplina: ");
-			String disciplinePeriod = readData.readString();
+				System.out.printf("\nNumero da atividade: ");
+				int activityNumber = readData.readInt();
 
-			System.out.printf("\nNumero da atividade: ");
-			int activityNumber = readData.readInt();
+				System.out.printf("\nNota para a atividade: ");
+				double activityGrade = readData.readDouble();
 
-			System.out.printf("\nNota para a atividade: ");
-			double activityGrade = readData.readDouble();
-
-			Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, disciplines);
-			if (discipline == null)
-				System.out.println("disciplina nao encontrada");
-			else {
-				Student student = util.findStudent(studentCode, students);
-				if (student != null) {
-					ActivityRating activityRating = new ActivityRating(student, discipline, activityGrade);
-					discipline.getActivities().get(activityNumber - 1).setSudentsEvaluation(activityRating);
-					System.out.println("sucesso ao avaliar atividade: ");
+				Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, disciplines);
+				if (discipline == null) {					
+					throw new InvalidReferenceException(disciplineCode+"-"+disciplinePeriod);
+				}
+				else {
+					Student student = util.findStudent(studentCode, students);
+					if (student == null) {
+						throw new InvalidReferenceException(String.valueOf(studentCode));
+					}
+					else {
+						Activity activity = discipline.getActivities().get(activityNumber - 1);
+						if(activity == null) {
+							throw new InvalidReferenceException(discipline.getDisciplineReference()+"-"+activityNumber);
+						}
+						else {
+							
+							if(util.studentAlreadyEvaluatedAtivity(student, activity)) {
+								throw new ActivityAlreadyEvaluatedException(student.getStudentReference(), activityNumber, discipline.getDisciplineReference());
+							}
+							else {
+								ActivityRating activityRating = new ActivityRating(student, discipline, activityGrade);
+								activity.setSudentEvaluation(activityRating);
+								System.out.println("sucesso ao avaliar atividade: ");
+							}
+							
+						}
+						
+						
+					}
 				}
 			}
 
+		} catch (InvalidReferenceException e) {
+			System.out.println("Referencia nao cadastrada no sistema: " + e.getReference());
+		}catch(ActivityAlreadyEvaluatedException e) {
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -538,17 +558,16 @@ public class Menu implements Serializable {
 
 			case 1:
 				listPeriods();
-				System.out.println("Digite o periodo cadastrado no formato ANO/SEMESTRE (ex: 2019/1) ");
+				System.out.printf("Digite o periodo cadastrado no formato ANO/SEMESTRE (ex: 2019/1): ");
 				String periodReference = readData.readString();
 				Period period = periods.get(periodReference);
 				if (period == null) {
 					throw new InvalidReferenceException(periodReference);
-				} 
-				else {
+				} else {
 					report.periodsReport(period);
 					util.pressAnyKeyToContinue();
 				}
-				
+
 				break;
 
 			case 2:
@@ -561,7 +580,7 @@ public class Menu implements Serializable {
 						report.teachersReport(teacher.getValue());
 					}
 				}
-				System.out.println("\n Digite qualquer coisa para continuar: ");
+				util.pressAnyKeyToContinue();
 
 				break;
 
@@ -575,26 +594,21 @@ public class Menu implements Serializable {
 						report.studentsReport(student.getValue());
 					}
 				}
-				System.out.println("\n Digite qualquer coisa para continuar: ");
+				util.pressAnyKeyToContinue();
 
 				break;
 
 			case 4:
 
 				listTeachers();
-				System.out.println("Digite o login institucional do docente: ");
+				System.out.printf("Digite o login institucional do docente: ");
 				String teacherReference = readData.readString();
 				Teacher teacher = teachers.get(teacherReference);
 				if (teacher != null) {
-
 					report.teachersDisciplinesReport(teacher);
-					System.out.println("\n Digite qualquer coisa para continuar: ");
-
-
+					util.pressAnyKeyToContinue();
 				}
-
 				break;
-
 			}
 
 		} catch (InvalidReferenceException e) {

@@ -13,7 +13,7 @@ abstract public class Activity implements Serializable {
     private boolean synchronous;
     private Discipline discipline;
     private int activityNumber;
-    private List<ActivityRating> studentsRating = new ArrayList<>();
+    private List<ActivityRating> studentsRating ;
     private double workLoad;
     private boolean isAvaliative;
 
@@ -23,6 +23,7 @@ abstract public class Activity implements Serializable {
         this.discipline = discipline;
     	this.workLoad = workLoad;
     	this.isAvaliative= isAvaliative;
+    	this.studentsRating = new ArrayList<>();
     }
 
     public Activity(String name, Discipline discipline,boolean isAvaliative, boolean synchronous) {
@@ -82,7 +83,7 @@ abstract public class Activity implements Serializable {
         return this.studentsRating;
     }
 
-    public void setSudentsEvaluation(ActivityRating studentEvaluation) {
+    public void setSudentEvaluation(ActivityRating studentEvaluation) {
         this.studentsRating.add(studentEvaluation);
     }
     

@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Scanner;
 
 import trabalhoprog3java.domain.Discipline;
+import trabalhoprog3java.domain.activity.Activity;
+import trabalhoprog3java.domain.activity.ActivityRating;
 import trabalhoprog3java.domain.activity.Student;
 
 import java.io.FileInputStream;
@@ -93,5 +95,14 @@ public class Utils implements Serializable {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+	}
+	public boolean studentAlreadyEvaluatedAtivity(Student student, Activity activity) {
+		
+		for(ActivityRating activityRating: activity.getstudentsRating()) {
+			if(activityRating.getStudent() == student) {
+				return true;
+			}
+		}		
+		return false;
 	}
 }

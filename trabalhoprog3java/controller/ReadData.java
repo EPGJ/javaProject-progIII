@@ -122,12 +122,12 @@ public class ReadData {
 		return number;
 	}
 	public Double readDouble() {
-		Double number = -1.0;
-		String line = input.nextLine();
-		try {
-			number = Double.parseDouble(line);
+		double number = -1;
+		try {		
+			number = input.nextDouble();
+			clearBuffer();
 		}catch(NumberFormatException e) {
-			System.out.println("O valor informado nao eh um numero real: " + line );
+			System.out.println(e.getMessage());
 		}
 		return number;
 	}
