@@ -10,15 +10,13 @@ import trabalhoprog3java.exception.NotCharException;
 
 
 public class ReadData {
-	public Scanner input;
-	
-	public ReadData(Scanner input) {
-		this.input = input;
-	}
+	Scanner input = new Scanner(System.in);
+	Utils util = new Utils();
 	
 	public Integer readUserDecision( int numberOptions) {
+		
 		int userDecision;
-		String line = input.next();
+		String line = input.nextLine();
 		try {
 			userDecision = Integer.parseInt(line);
 			if(userDecision<=0 || userDecision > numberOptions) {
@@ -75,6 +73,9 @@ public class ReadData {
 			return false;
 		}
 	}
+	public String readString() {
+		return input.nextLine();
+	}
 	public String readLogin() {
 		try {
 			String login = input.next();
@@ -103,11 +104,21 @@ public class ReadData {
 	}
 	public Integer readInt() {
 		int number = -1 ;
-		String line = input.next();; 
+		String line = input.next(); 
 		try {
 			number = Integer.parseInt(line);
 		}catch(NumberFormatException e) {
 			System.out.println("O valor informado nao eh inteiro: " + line );
+		}
+		return number;
+	}
+	public Double readDouble() {
+		Double number = -1.0;
+		String line = input.next();
+		try {
+			number = Double.parseDouble(line);
+		}catch(NumberFormatException e) {
+			System.out.println("O valor informado nao eh um numero real: " + line );
 		}
 		return number;
 	}

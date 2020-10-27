@@ -21,40 +21,40 @@ public class Main {
         do {
             menu.printMenuOptions();
             option = input.nextInt();
-            input.nextLine();
+            util.clearBuffer(input);
 
             switch (option) {
        
                 case 1:
-                	menu.periodRegister(input);
+                	menu.periodRegister();
                 	break;
       
                 case 2:
-                    menu.teacherRegister(input);
+                    menu.teacherRegister();
                     break;
             
                 case 3:
-                    menu.disciplineRegister(input);
+                    menu.disciplineRegister();
                     break;
 
                 case 4:
-                    menu.studentRegister(input);
+                    menu.studentRegister();
                     break;
 
                 case 5:
-                    menu.enrollStudent(input);
+                    menu.enrollStudent();
                     break;
 
                 case 6:
-//                	menu.activityRegister(input);
+                	menu.activityRegister();
                     break;
 
                 case 7:
-//                	menu.activityRating(input);
+                	menu.activityRating();
                     break;
                 
                 case 8:
-//                    menu.report(input);
+                    menu.report();
                     break;
                 case 9:
                     util.serialize(menu, input);
