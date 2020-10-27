@@ -66,7 +66,7 @@ abstract public class Activity implements Serializable {
     }
 
     public String getActivityData() {
-    	String activityData = "\nNome: "+this.name+ "\nDisciplina: "+this.discipline 
+    	String activityData = "\nNome: "+this.name+ "\nDisciplina: "+this.discipline.getName() 
     							+ "\nEh sincrona?: "+this.isSynchronous() ;
 
     	if(this.studentsRating.size()>0) {

@@ -3,6 +3,7 @@ package trabalhoprog3java;
 import java.util.Scanner;
 
 import trabalhoprog3java.controller.Menu;
+import trabalhoprog3java.controller.ReadData;
 import trabalhoprog3java.controller.Utils;
 
 import java.util.Locale;
@@ -14,14 +15,16 @@ public class Main {
 		Locale.setDefault(new Locale("pt", "BR"));
         int option = 0;
         Scanner input = new Scanner(System.in);
-        Utils util = new Utils();
+        ReadData readData = new ReadData(input);
+        Menu menu = new Menu(readData);
+        Utils util = new Utils(readData);
         util.cleanConsole();
-        Menu menu = new Menu();
+       
 
         do {
             menu.printMenuOptions();
-            option = input.nextInt();
-            util.clearBuffer(input);
+            option = readData.readUserDecision(11);  // o usuario possui onze opcoes de escolha
+
 
             switch (option) {
        

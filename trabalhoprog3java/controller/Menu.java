@@ -30,9 +30,15 @@ public class Menu implements Serializable {
 	Map<Integer, Student> students = new HashMap<>();
 	Map<String, Teacher> teachers = new HashMap<>();
 	List<Activity> activities = new ArrayList<>();
-	Utils util = new Utils();
-	Report report = new Report();
-	ReadData readData = new ReadData();
+	Utils util;
+	Report report;
+	ReadData readData;
+	
+	public Menu(ReadData readData) {
+		this.readData = readData;
+		this.util = new Utils(readData);
+		this.report  = new Report();
+	}
 
 	public void printMenuOptions() {
 		System.out.printf("\n\tMENU\n" + "1 - Cadastro de períodos \n" + "2 - Cadastro de docentes  \n"
@@ -65,6 +71,14 @@ public class Menu implements Serializable {
 
 	}
 
+	public void listStudents() {
+		if (students.size() > 0) {
+			System.out.println("\n\nEstudantes cadastrados: ");
+			students.forEach((key, student) -> System.out.println(student.getStudentData()));
+
+		}
+	}
+	
 	public void listTeachers() {
 		if (teachers.size() > 0) {
 			System.out.println("\n\nDocentes cadastrados: ");
@@ -73,9 +87,24 @@ public class Menu implements Serializable {
 		}
 	}
 
+	public void listDisciplines() {
+		if (disciplines.size() > 0) {
+			System.out.println("\n\nDisciplinas cadastradas: ");
+
+			disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
+
+		}
+	}
+	
+	public void listActivities() {
+		if (!activities.isEmpty()) {
+			System.out.println("\n\nAtividades cadastradas: ");
+			activities.forEach(activity -> System.out.println(activity.getActivityData()));
+		}
+	}
+	
 	public void periodRegister() {
 		try {
-
 			listPeriods();
 			printItemOptions("Registrar novo periodo\n");
 			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
@@ -101,6 +130,8 @@ public class Menu implements Serializable {
 					}
 				}
 			}
+			
+			
 		} catch (ReferenceAlredyExistsException e) {
 			System.out.println(e.getMessage());
 		}
@@ -116,17 +147,19 @@ public class Menu implements Serializable {
 				System.out.printf("\nLogin: ");
 				String login = readData.readLogin();
 
+				
 				if (login != "invalid") {
+					
 					System.out.printf("Nome Completo: ");
 					String fullName = readData.readString();
+					System.out.printf("Deseja adicionar pagina web? \n1 - Sim\n2 - Nao\nDigite sua escolha: ");
+					int response = readData.readUserDecision(2);
 
-					System.out.printf("Deseja adicionar pagina web?(S/N): ");
-					boolean positiveResponse = readData.readResponse();
-
-					if (positiveResponse) {
+					if (response == 1) {
 
 						System.out.printf("Pagina Web: ");
 						String webPage = readData.readString();
+						
 
 						Teacher teacher = new Teacher(login, fullName, webPage);
 						if (teachers.get(teacher.getTeacherReference()) != null) {
@@ -144,7 +177,6 @@ public class Menu implements Serializable {
 
 					System.out.println("Sucesso ao cadastrar novo Professor");
 				}
-
 			}
 		} catch (ReferenceAlredyExistsException e) {
 			System.out.println(e.getMessage());
@@ -154,12 +186,7 @@ public class Menu implements Serializable {
 
 	public void disciplineRegister() {
 		try {
-			if (disciplines.size() > 0) {
-				System.out.println("\n\nDisciplinas cadastradas: ");
-
-				disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
-
-			}
+			listDisciplines();
 			printItemOptions("Registrar nova disciplina\n");
 
 			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
@@ -200,22 +227,17 @@ public class Menu implements Serializable {
 			}
 		} catch (InvalidReferenceException e) {
 			System.out.println("Referencia nao cadastrada no sistema: " + e.getReference());
-//			input.next("Digite alguma coisa para continuar...");
+
 		} catch (ReferenceAlredyExistsException e) {
 			System.out.println(e.getMessage());
-//			input.next("Digite alguma coisa para continuar...");
+
 		}
 
 	}
 
 	public void studentRegister() {
 		try {
-			if (students.size() > 0) {
-				System.out.println("\n\nEstudantes cadastrados: ");
-				students.forEach((key, student) -> System.out.println(student.getStudentData()));
-
-			}
-
+			listStudents();
 			printItemOptions("Registrar novo estudante\n");
 			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
 
@@ -263,7 +285,7 @@ public class Menu implements Serializable {
 					Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, disciplines);
 
 					if (discipline == null)
-						throw new InvalidReferenceException(disciplineCode + "/" + disciplinePeriod);
+						throw new InvalidReferenceException(disciplineCode + "-" + disciplinePeriod);
 					else {
 						Student student = util.findStudent(studentCode, students);
 						if (student == null) {
@@ -290,10 +312,7 @@ public class Menu implements Serializable {
 	}
 
 	public void activityRegister() {
-		if (!activities.isEmpty()) {
-			System.out.println("\n\nAtividades cadastradas: ");
-			activities.forEach(activity -> System.out.println(activity.getActivityData()));
-		}
+		listActivities();
 		printItemOptions("Cadastrar aula\n" + "Cadastrar estudo\n" + "Cadastrar trabalho\n" + "Cadastrar prova\n");
 		int userDecision = readData.readUserDecision(5); // o usuario possui cinco opcoes de escolha
 
@@ -411,11 +430,9 @@ public class Menu implements Serializable {
 
 			System.out.printf("Numero maximo de pessoas por grupo: ");
 			int maxNumber = readData.readInt();
-			readData.readString();
 
 			System.out.printf("Carga horaria: ");
 			double workload = readData.readDouble();
-			readData.readString();
 
 			Work newWork = new Work(name, discipline, date, maxNumber, workload);
 
@@ -448,7 +465,7 @@ public class Menu implements Serializable {
 				materials.add(materialRegister());
 				System.out.println("\nDeseja cadastrar outro material?\n1 - Sim\n2 - Nao\nDigite sua escolha: ");
 				option = readData.readInt();
-				readData.readString();
+
 
 			} while (option == 1);
 
@@ -481,7 +498,7 @@ public class Menu implements Serializable {
 
 			System.out.printf("\nCodigo de matricula do estudante: ");
 			int studentCode = readData.readInt();
-			readData.readString();
+
 
 			System.out.printf("Codigo da disciplina: ");
 			String disciplineCode = readData.readString();
@@ -491,11 +508,9 @@ public class Menu implements Serializable {
 
 			System.out.printf("\nNumero da atividade: ");
 			int activityNumber = readData.readInt();
-			readData.readString();
 
 			System.out.printf("\nNota para a atividade: ");
 			double activityGrade = readData.readDouble();
-			readData.readString();
 
 			Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, disciplines);
 			if (discipline == null)

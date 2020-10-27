@@ -10,12 +10,20 @@ import trabalhoprog3java.exception.NotCharException;
 
 
 public class ReadData {
-	Scanner input = new Scanner(System.in);
-	Utils util = new Utils();
+	Scanner input;
+	
+	public ReadData(Scanner input) {
+		this.input = input;
+	}
+	public  void clearBuffer() {
+        if (input.hasNextLine()) {
+        	input.nextLine();
+        }
+    }
 	
 	public Integer readUserDecision( int numberOptions) {
 		
-		int userDecision;
+		int userDecision = -1;
 		String line = input.nextLine();
 		try {
 			userDecision = Integer.parseInt(line);
@@ -29,12 +37,12 @@ public class ReadData {
 		}catch(NotAnOptionException e) {
 			System.out.println(e.getMessage());
 		}
-		return 0;
+		return userDecision;
 	}
 	
 	public Integer readYear(){
 		int year;
-		String line = input.next();
+		String line = input.nextLine();
 		try {
 			year = Integer.parseInt(line);
 			if(year <= 0) {
@@ -49,7 +57,7 @@ public class ReadData {
 		return -1;
 	}
 	public char readChar() {
-		String line = input.next();
+		String line = input.nextLine();
 
 		try {
 			if (line.length() > 1) {
@@ -74,11 +82,12 @@ public class ReadData {
 		}
 	}
 	public String readString() {
-		return input.nextLine();
+		String line = input.nextLine();
+		return line;
 	}
 	public String readLogin() {
 		try {
-			String login = input.next();
+			String login = input.nextLine();
 			if(login.split("[.]").length != 2) {
 				throw new InvalidReferenceException(login);
 			}
@@ -92,7 +101,7 @@ public class ReadData {
 	}
 	public String readPeriod(){
 		try {
-			String period = input.next();
+			String period = input.nextLine();
 			if(period.split("/").length != 2) {
 				throw new InvalidReferenceException(period);
 			}
@@ -104,7 +113,7 @@ public class ReadData {
 	}
 	public Integer readInt() {
 		int number = -1 ;
-		String line = input.next(); 
+		String line = input.nextLine(); 
 		try {
 			number = Integer.parseInt(line);
 		}catch(NumberFormatException e) {
@@ -114,7 +123,7 @@ public class ReadData {
 	}
 	public Double readDouble() {
 		Double number = -1.0;
-		String line = input.next();
+		String line = input.nextLine();
 		try {
 			number = Double.parseDouble(line);
 		}catch(NumberFormatException e) {

@@ -14,7 +14,12 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Utils implements Serializable {
-
+	private ReadData readData;
+		
+	public Utils(ReadData readData) {
+		this.readData = readData;
+	}
+	
 	public Discipline findDiscipline(String code, String period, Map<String, Discipline> disciplines) {
 		return disciplines.get(code + "-" + period);
 	}
@@ -89,9 +94,4 @@ public class Utils implements Serializable {
 			System.out.println(e.getMessage());
 		}
 	}
-	public  void clearBuffer(Scanner scanner) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine();
-        }
-    }
 }
