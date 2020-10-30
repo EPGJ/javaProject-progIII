@@ -1,4 +1,4 @@
-package trabalhoprog3java.domain.study;
+package trabalhoprog3java.domain.activity.study;
 import java.io.Serializable;
 
 public class Material implements Serializable{

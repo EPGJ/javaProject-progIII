@@ -1,7 +1,6 @@
 package trabalhoprog3java.controller;
 
 import java.io.Serializable;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +16,8 @@ import trabalhoprog3java.domain.activity.Lesson;
 import trabalhoprog3java.domain.activity.Student;
 import trabalhoprog3java.domain.activity.Test;
 import trabalhoprog3java.domain.activity.Work;
-import trabalhoprog3java.domain.study.Material;
-import trabalhoprog3java.domain.study.Study;
+import trabalhoprog3java.domain.activity.study.Material;
+import trabalhoprog3java.domain.activity.study.Study;
 import trabalhoprog3java.exception.ActivityAlreadyEvaluatedException;
 import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.ReferenceAlredyExistsException;
@@ -26,11 +25,11 @@ import trabalhoprog3java.exception.ReferenceAlredyExistsException;
 public class Menu implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	Map<String, Period> periods = new HashMap<>();
-	Map<String, Discipline> disciplines = new HashMap<>();
-	Map<Integer, Student> students = new HashMap<>();
-	Map<String, Teacher> teachers = new HashMap<>();
-	List<Activity> activities = new ArrayList<>();
+	Map<String, Period> periods;
+	Map<String, Discipline> disciplines;
+	Map<Integer, Student> students;
+	Map<String, Teacher> teachers; 
+	List<Activity> activities;
 	Utils util;
 	Report report;
 	ReadData readData;
@@ -39,6 +38,11 @@ public class Menu implements Serializable {
 		this.readData = readData;
 		this.util = new Utils(readData);
 		this.report = new Report();
+		this.periods = new HashMap<>();
+		this.disciplines  = new HashMap<>();
+		this.students = new HashMap<>();
+		this.teachers = new HashMap<>();
+		this.activities = new ArrayList<>(); 
 	}
 
 	public void printMenuOptions() {
@@ -590,6 +594,7 @@ public class Menu implements Serializable {
 
 				if (students.size() > 0) {
 					for (Entry<Integer, Student> student : students.entrySet()) {
+						
 						student.getValue().findAssociatedDisciplines(disciplines);
 						report.studentsReport(student.getValue());
 					}
@@ -604,7 +609,10 @@ public class Menu implements Serializable {
 				System.out.printf("Digite o login institucional do docente: ");
 				String teacherReference = readData.readString();
 				Teacher teacher = teachers.get(teacherReference);
-				if (teacher != null) {
+				if (teacher == null) {
+					throw new InvalidReferenceException(teacherReference);
+				}
+				else {
 					report.teachersDisciplinesReport(teacher);
 					util.pressAnyKeyToContinue();
 				}

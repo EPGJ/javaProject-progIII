@@ -6,12 +6,13 @@ import java.util.List;
 public class Period implements Serializable {
     private int year;
     private char semester;
-    private List<Discipline> disciplines = new ArrayList<>();
+    private List<Discipline> disciplines;
 
     
     public Period(int year, char semester ){
         this.semester = semester;
         this.year = year;
+        this.disciplines  = new ArrayList<>();
     }
 
     public char getSemester() {

@@ -1,4 +1,4 @@
-package trabalhoprog3java.domain.study;
+package trabalhoprog3java.domain.activity.study;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +8,7 @@ import trabalhoprog3java.domain.activity.Activity;
 
 public class Study extends Activity{
 	
-	private List<Material> materials = new ArrayList<>();
+	private List<Material> materials;
 
 	public Study(String name, Discipline discipline,  List<Material> materials) {
 		super(name, discipline,false,false);

@@ -13,7 +13,7 @@ abstract public class Activity implements Serializable {
     private boolean synchronous;
     private Discipline discipline;
     private int activityNumber;
-    private List<ActivityRating> studentsRating ;
+    private List<ActivityRating> studentsRating;
     private double workLoad;
     private boolean isAvaliative;
 

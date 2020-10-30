@@ -34,11 +34,11 @@ public class Utils implements Serializable {
 		System.out.println("\033[H\033[2J");
 	}
 
-	public void serialize(Menu menu, Scanner input) {
+	public void serialize(Menu menu) {
 		try {
 
 			System.out.printf("Digite o nome do arquivo: ");
-			String fileName = input.next();
+			String fileName = readData.readString();
 
 			FileOutputStream fileOut = new FileOutputStream("./" + fileName + ".dat");
 
@@ -54,12 +54,12 @@ public class Utils implements Serializable {
 
 	}
 
-	public Menu deserialize(Scanner input) {
+	public Menu deserialize() {
 		Menu menu = null;
 		try {
 
 			System.out.printf("Digite o nome do arquivo: ");
-			String fileName = input.next();
+			String fileName = readData.readString();
 
 			FileInputStream fileIn = new FileInputStream("./" + fileName + ".dat");
 			ObjectInputStream in = new ObjectInputStream(fileIn);

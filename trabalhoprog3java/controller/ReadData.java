@@ -1,25 +1,31 @@
 package trabalhoprog3java.controller;
 
 
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
-import trabalhoprog3java.exception.InputMismatchException;
 import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.NotAnOptionException;
 import trabalhoprog3java.exception.NotCharException;
 
 
-public class ReadData {
+public class ReadData implements Serializable {
 	Scanner input;
 	
-	public ReadData(Scanner input) {
-		this.input = input;
+	public ReadData() {
+		this.input = new Scanner(System.in);
 	}
 	public  void clearBuffer() {
         if (input.hasNextLine()) {
         	input.nextLine();
         }
     }
+	public void closeInput() {
+		this.input.close();
+	}
 	
 	public Integer readUserDecision( int numberOptions) {
 		
@@ -131,5 +137,24 @@ public class ReadData {
 		}
 		return number;
 	}
+	public Date readDate(){
+		Date date ;
+		try{
+			String line = input.nextLine();
+			if(line.split("/").length != 3) {
+				throw new InvalidReferenceException(line);
+			}
+			SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy"); 
+			date = f.parse(line);
+		}catch(InvalidReferenceException e) {
+			System.out.println("Data com formato invalido: "+ e.getReference());
+		}catch(ParseException e) {
+			System.out.println("Data invalida" );
+		}
+		
+		
+		return null;
+	}
+	
 
 }

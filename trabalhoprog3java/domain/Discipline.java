@@ -16,8 +16,8 @@ public class Discipline implements Serializable {
     private String name;
     private Period period;
     private Teacher responsableTeacher;
-    private List<Activity> activities = new ArrayList<>();
-    private List<Student> students = new ArrayList<>();
+    private List<Activity> activities;
+    private List<Student> students;
 
   
 
@@ -26,6 +26,9 @@ public class Discipline implements Serializable {
         this.name = name;
         this.period = period;
         this.responsableTeacher = responsableTeacher;
+        this.activities = new ArrayList<>();
+        this.students = new ArrayList<>();
+        
     }
 
     public String getCode() {

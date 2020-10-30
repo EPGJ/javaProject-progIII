@@ -14,7 +14,7 @@ public class Report implements Serializable {
 		System.out.println("\tDISCIPLINAS: \n");
 
 		period.getDisciplines().forEach(discipline -> System.out.println("Codigo da disciplina: " + discipline.getCode()
-				+ "\nNome da disciplina: " + discipline.getName() + "\nNome da disciplina: " + discipline.getName()
+				+ "\nNome da disciplina: " + discipline.getName() 
 				+ "\nNome do docente: " + discipline.getResponsableTeacher().getFullName() + "\nEmail do docente: "
 				+ discipline.getResponsableTeacher().getLogin() + "@ufes.br"
 				+ "\nQuantidade de estudantes matriculados: " + discipline.getEnrolledStudents().size()

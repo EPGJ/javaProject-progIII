@@ -9,9 +9,10 @@ public class Person implements Serializable{
 
 
 	private String fullName;
-    private List<Discipline> associatedDisciplines = new ArrayList<>();
+    private List<Discipline> associatedDisciplines;
 
     public Person(){
+    	this.associatedDisciplines = new ArrayList<>();
     }
 
     public Person(String fullName){
