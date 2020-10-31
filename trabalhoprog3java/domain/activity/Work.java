@@ -6,11 +6,11 @@ import trabalhoprog3java.domain.Discipline;
 
 public class Work extends Activity {
 		
-	private String deadline;
+	private Date deadline;
 	private int maxNumber;
 
 	
-	public Work(String name, Discipline discipline,String deadline, int maxNumber, double workLoad) {
+	public Work(String name, Discipline discipline,Date deadline, int maxNumber, double workLoad) {
 		super(name, discipline, true,false, workLoad);
 		this.maxNumber = maxNumber;
 		this.deadline = deadline;
@@ -18,7 +18,7 @@ public class Work extends Activity {
 	}
 
 
-	public String getDeadline() {
+	public Date getDeadline() {
 		return deadline;
 	}
 

@@ -1,9 +1,10 @@
 package trabalhoprog3java.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Period implements Serializable {
+public class Period implements Serializable, Comparable<Period>{
     private int year;
     private char semester;
     private List<Discipline> disciplines;
@@ -40,5 +41,20 @@ public class Period implements Serializable {
 
 	public void setDiscipline(Discipline discipline) {
 		this.disciplines.add(discipline);
+	}
+
+	public void sort() {
+		Collections.sort(disciplines);
+	}
+	
+	@Override
+	public int compareTo(Period period) {
+		int yearCompare = this.year - period.year;
+		if(yearCompare==0) {
+			return this.semester - period.semester;
+		}
+		else {
+			return yearCompare;
+		}	
 	}
 }

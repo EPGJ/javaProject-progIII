@@ -6,12 +6,12 @@ import trabalhoprog3java.domain.Discipline;
 
 public class Lesson extends Activity {
 	
-	private String date;
+	private Date date;
 	private String time;
 	private int maxPeopleQuantity;
 	private double  workload;
 	
-	public Lesson(String name, Discipline discipline, String date, String time) {
+	public Lesson(String name, Discipline discipline, Date date, String time) {
 		super(name, discipline,false,true);
 		this.date = date;
 		this.time = time;
@@ -19,21 +19,16 @@ public class Lesson extends Activity {
 
 
 
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
-	}
+	
 
 	public double getWorkload() {
 		return workload;
 	}
 
-	public void setWorkload(double workload) {
-		this.workload = workload;
-	}
 
 	public int getMaxPeopleQuantity() {
 		return maxPeopleQuantity;

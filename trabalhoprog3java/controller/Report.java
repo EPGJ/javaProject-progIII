@@ -3,16 +3,16 @@ import java.io.Serializable;
 
 import trabalhoprog3java.domain.Discipline;
 import trabalhoprog3java.domain.Period;
+import trabalhoprog3java.domain.Student;
 import trabalhoprog3java.domain.Teacher;
 import trabalhoprog3java.domain.activity.Activity;
-import trabalhoprog3java.domain.activity.Student;
 
 public class Report implements Serializable {
 
 	public void periodsReport(Period period) {
-		System.out.println("\n\n\tRelatorio geral do periodo academico \n");
-		System.out.println("\tDISCIPLINAS: \n");
-
+	
+		
+		period.sort();		
 		period.getDisciplines().forEach(discipline -> System.out.println("Codigo da disciplina: " + discipline.getCode()
 				+ "\nNome da disciplina: " + discipline.getName() 
 				+ "\nNome do docente: " + discipline.getResponsableTeacher().getFullName() + "\nEmail do docente: "

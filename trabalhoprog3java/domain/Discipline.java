@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import trabalhoprog3java.domain.activity.Activity;
-import trabalhoprog3java.domain.activity.Student;
 
 
 
 
 
-public class Discipline implements Serializable {
+public class Discipline implements Serializable, Comparable<Discipline>{
 
 	private String code;
     private String name;
@@ -133,7 +132,10 @@ public class Discipline implements Serializable {
     	}
     	return disciplineWorkLoad;
     }
-    
-    
+
+	@Override
+	public int compareTo(Discipline discipline) {
+		return this.name.compareTo(discipline.name);
+	}
 
 }

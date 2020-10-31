@@ -138,7 +138,7 @@ public class ReadData implements Serializable {
 		return number;
 	}
 	public Date readDate(){
-		Date date ;
+		Date date =null ;
 		try{
 			String line = input.nextLine();
 			if(line.split("/").length != 3) {
@@ -146,6 +146,7 @@ public class ReadData implements Serializable {
 			}
 			SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy"); 
 			date = f.parse(line);
+			
 		}catch(InvalidReferenceException e) {
 			System.out.println("Data com formato invalido: "+ e.getReference());
 		}catch(ParseException e) {
@@ -153,7 +154,7 @@ public class ReadData implements Serializable {
 		}
 		
 		
-		return null;
+		return date;
 	}
 	
 

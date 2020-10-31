@@ -3,6 +3,7 @@ package trabalhoprog3java.domain.activity;
 import java.io.Serializable;
 
 import trabalhoprog3java.domain.Discipline;
+import trabalhoprog3java.domain.Student;
 
 public class ActivityRating implements Serializable{
     private Student student;

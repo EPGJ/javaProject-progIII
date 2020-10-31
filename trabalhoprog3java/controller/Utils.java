@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 import trabalhoprog3java.domain.Discipline;
+import trabalhoprog3java.domain.Student;
 import trabalhoprog3java.domain.activity.Activity;
 import trabalhoprog3java.domain.activity.ActivityRating;
-import trabalhoprog3java.domain.activity.Student;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

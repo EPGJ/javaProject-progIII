@@ -1,8 +1,5 @@
-package trabalhoprog3java.domain.activity;
+package trabalhoprog3java.domain;
 import java.util.Map;
-
-import trabalhoprog3java.domain.Discipline;
-import trabalhoprog3java.domain.Person;
 
 public class Student extends Person {
 

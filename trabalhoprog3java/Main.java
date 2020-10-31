@@ -17,12 +17,7 @@ public class Main implements Serializable{
         ReadData readData = new ReadData();
         Menu menu = new Menu(readData);
         Utils util = new Utils(readData);
-        util.cleanConsole();
-        
-
-
-
-		
+        util.cleanConsole();		
 //		Date data1,data2;
 //        String line = "26/11/2020";
 //        String line2 = "26/12/2020";
@@ -37,6 +32,8 @@ public class Main implements Serializable{
 //        else {
 //        	System.out.println("eh depois");
 //        }
+    
+        
 
 		
         do {

@@ -2,6 +2,8 @@ package trabalhoprog3java.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,11 +11,11 @@ import java.util.Map.Entry;
 
 import trabalhoprog3java.domain.Discipline;
 import trabalhoprog3java.domain.Period;
+import trabalhoprog3java.domain.Student;
 import trabalhoprog3java.domain.Teacher;
 import trabalhoprog3java.domain.activity.Activity;
 import trabalhoprog3java.domain.activity.ActivityRating;
 import trabalhoprog3java.domain.activity.Lesson;
-import trabalhoprog3java.domain.activity.Student;
 import trabalhoprog3java.domain.activity.Test;
 import trabalhoprog3java.domain.activity.Work;
 import trabalhoprog3java.domain.activity.study.Material;
@@ -360,7 +362,7 @@ public class Menu implements Serializable {
 		} else {
 
 			System.out.printf("Data da prova ( DD/MM/AAAA ): ");
-			String date = readData.readString();
+			Date date = readData.readDate();
 
 			System.out.printf("horario da aula ( HH:MM ): ");
 			String time = readData.readString();
@@ -395,7 +397,7 @@ public class Menu implements Serializable {
 		} else {
 
 			System.out.printf("Data da aula ( DD/MM/AAAA ): ");
-			String date = readData.readString();
+			Date date = readData.readDate();
 
 			System.out.printf("horario da aula ( HH:MM ): ");
 			String time = readData.readString();
@@ -427,8 +429,8 @@ public class Menu implements Serializable {
 		} else {
 
 			System.out.printf("Data de entrega ( DD/MM/AAAA ): ");
-			String date = readData.readString();
-
+			Date date = readData.readDate();
+			
 			System.out.printf("Numero maximo de pessoas por grupo: ");
 			int maxNumber = readData.readInt();
 
@@ -561,17 +563,19 @@ public class Menu implements Serializable {
 			switch (userDecision) {
 
 			case 1:
-				listPeriods();
-				System.out.printf("Digite o periodo cadastrado no formato ANO/SEMESTRE (ex: 2019/1): ");
-				String periodReference = readData.readString();
-				Period period = periods.get(periodReference);
-				if (period == null) {
-					throw new InvalidReferenceException(periodReference);
-				} else {
+//				listPeriods();
+				System.out.println("\n\nRelatorio geral dos periodos academicos \n");
+//				System.out.println("\tDISCIPLINAS: \n");
+				
+				List<Period> periodsList = new ArrayList<>(periods.values());
+				Collections.sort(periodsList);
+				
+				
+				for(Period period : periodsList) {
+					System.out.println("\tDISCIPLINAS("+period.getPeriodReference()+"): \n");
 					report.periodsReport(period);
-					util.pressAnyKeyToContinue();
 				}
-
+				util.pressAnyKeyToContinue();
 				break;
 
 			case 2:
@@ -592,6 +596,7 @@ public class Menu implements Serializable {
 				System.out.println("\n\n\tEstatisticas dos estudantes");
 				System.out.println("\nEstudantes: \n");
 
+				
 				if (students.size() > 0) {
 					for (Entry<Integer, Student> student : students.entrySet()) {
 						
