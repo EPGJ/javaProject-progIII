@@ -209,7 +209,9 @@ public class Menu implements Serializable {
 					System.out.printf("Login institucional do professor responsavel: ");
 					String responsableTeacher = readData.readLogin();
 					if (responsableTeacher != "invalid") {
-						if (teachers.get(responsableTeacher) == null) {
+						Teacher teacher = teachers.get(responsableTeacher);
+						
+						if (teacher == null) {
 							throw new InvalidReferenceException(responsableTeacher);
 						}
 
@@ -221,7 +223,10 @@ public class Menu implements Serializable {
 						if (disciplines.get(discipline.getDisciplineReference()) != null) {
 							throw new ReferenceAlredyExistsException(discipline.getDisciplineReference());
 						}
-
+						
+						
+						System.out.println(discipline.getName());
+						teacher.setAssociatedDiscipline(discipline);
 						disciplines.put(discipline.getDisciplineReference(), discipline);
 						period.setDiscipline(discipline);
 						System.out.println("Sucesso ao cadastrar nova disciplina");
@@ -298,7 +303,7 @@ public class Menu implements Serializable {
 						if (util.isEnrolled(discipline, student)) {
 							throw new ReferenceAlredyExistsException(String.valueOf(student.getStudentReference()));
 						}
-
+						student.setAssociatedDiscipline(discipline);
 						discipline.enrollStudent(student);
 						System.out.println("Sucesso ao matricular estudante");
 					}
@@ -563,16 +568,13 @@ public class Menu implements Serializable {
 			switch (userDecision) {
 
 			case 1:
-//				listPeriods();
 				System.out.println("\n\nRelatorio geral dos periodos academicos \n");
-//				System.out.println("\tDISCIPLINAS: \n");
 				
 				List<Period> periodsList = new ArrayList<>(periods.values());
 				Collections.sort(periodsList);
 				
-				
 				for(Period period : periodsList) {
-					System.out.println("\tDISCIPLINAS("+period.getPeriodReference()+"): \n");
+					System.out.println("\tDISCIPLINAS ("+period.getPeriodReference()+"): \n");
 					report.periodsReport(period);
 				}
 				util.pressAnyKeyToContinue();
@@ -581,13 +583,14 @@ public class Menu implements Serializable {
 			case 2:
 				System.out.println("\n\n\tEstatisticas dos docentes");
 				System.out.println("\nPROFESSORES: \n");
-
-				if (teachers.size() > 0) {
-					for (Map.Entry<String, Teacher> teacher : teachers.entrySet()) {
-						teacher.getValue().findAssociatedDisciplines(disciplines);
-						report.teachersReport(teacher.getValue());
-					}
+				
+				List<Teacher> teachersList = new ArrayList<>(teachers.values());
+				Collections.sort(teachersList);
+					
+				for(Teacher teacher: teachersList) {
+					report.teachersReport(teacher);
 				}
+				
 				util.pressAnyKeyToContinue();
 
 				break;
@@ -596,14 +599,13 @@ public class Menu implements Serializable {
 				System.out.println("\n\n\tEstatisticas dos estudantes");
 				System.out.println("\nEstudantes: \n");
 
-				
-				if (students.size() > 0) {
-					for (Entry<Integer, Student> student : students.entrySet()) {
-						
-						student.getValue().findAssociatedDisciplines(disciplines);
-						report.studentsReport(student.getValue());
-					}
+				List<Student> studenstList = new ArrayList<>(students.values());
+//				Collections.sort(studentsList);
+					
+				for(Student student: studenstList) {
+					report.studentsReport(student);
 				}
+				
 				util.pressAnyKeyToContinue();
 
 				break;

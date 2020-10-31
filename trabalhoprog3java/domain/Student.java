@@ -6,8 +6,6 @@ public class Student extends Person {
 
 	private int registrationCode;
     
-    public Student(){
-    }
     
     public Student(int registrationCode, String fullName){
         super(fullName);
@@ -28,15 +26,7 @@ public class Student extends Person {
     public String getStudentData(){
     	return "\nMatricula: " +this.registrationCode+"\nNome Completo: " +this.getFullName();
     }
-    @Override
-    public void findAssociatedDisciplines(Map<String, Discipline> disciplines) {
-		for (Map.Entry<String, Discipline> discipline : disciplines.entrySet()) {
-			if( discipline.getValue().isStudentInDiscipline(this) ) {
-				super.getAssociatedDisciplines().add(discipline.getValue());
-			}
-			
-		}
-	}
+
     public double calculateAverageEnrolledDisciplinesByPeriod() {
     	return ((double)super.getAssociatedDisciplines().size())/((double)super.getNumberOfAssociatedPeriods());
     }

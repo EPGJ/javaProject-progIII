@@ -6,14 +6,13 @@ import java.util.Map;
 import trabalhoprog3java.domain.activity.Activity;
 import trabalhoprog3java.domain.activity.ActivityRating;
 
-public class Teacher extends Person {
+public class Teacher extends Person implements Comparable<Teacher> {
 
 	private String login;
 	private String webPage;
 	
 
-	public Teacher() {
-	}
+	
 
 	public Teacher(String login, String fullName) {
 		super(fullName);
@@ -55,23 +54,20 @@ public class Teacher extends Person {
 
 	}
 
-	@Override
-	public void findAssociatedDisciplines(Map<String, Discipline> disciplines) {
-		for (Map.Entry<String, Discipline> discipline : disciplines.entrySet()) {
-			if (discipline.getValue().getResponsableTeacher() == this) {
-				super.getAssociatedDisciplines().add(discipline.getValue());
-			}
-		}
-	}
 
-	public double calculateAvarageActivitiesByDiscipline() {
+
+	public double calculateAvarageActivitiesPerDiscipline() {
 		double average = 0;
 
 		for (Discipline discipline : super.getAssociatedDisciplines()) {
 			average += discipline.getActivities().size();
 		}
-		average /= super.getAssociatedDisciplines().size();
-		return average;
+		int quantidade = super.getAssociatedDisciplines().size();
+		if(quantidade!=0) {			
+			average /= super.getAssociatedDisciplines().size();
+			return average;
+		}
+		return 0;
 	}
 
 	public double calculatePercentageSynchronousActivities() {
@@ -111,6 +107,11 @@ public class Teacher extends Person {
 		}
 		
 		return (sumEvaluations/numberEvaluations);
+	}
+
+	@Override
+	public int compareTo(Teacher teacher) {
+		return teacher.getFullName().compareTo(super.getFullName());
 	}
 
 }

@@ -18,21 +18,12 @@ public class Main implements Serializable{
         Menu menu = new Menu(readData);
         Utils util = new Utils(readData);
         util.cleanConsole();		
-//		Date data1,data2;
-//        String line = "26/11/2020";
-//        String line2 = "26/12/2020";
-//        SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy"); 
-//        data1 = f.parse(line);
-//        data2 = f.parse(line2);
-//        System.out.println(data1);
-//        
-//        if(data1.before(data2)) {
-//        	System.out.println("eh antes");
-//        }
-//        else {
-//        	System.out.println("eh depois");
-//        }
-    
+        
+        double num = 12.25;
+        System.out.println(num);
+        System.out.println(String.format("%.1f",num));
+      
+
         
 
 		

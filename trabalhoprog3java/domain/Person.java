@@ -11,12 +11,10 @@ public class Person implements Serializable{
 	private String fullName;
     private List<Discipline> associatedDisciplines;
 
-    public Person(){
-    	this.associatedDisciplines = new ArrayList<>();
-    }
 
     public Person(String fullName){
         this.fullName = fullName;
+        this.associatedDisciplines = new ArrayList<>();
     }
 
     public String getFullName() {
@@ -29,6 +27,12 @@ public class Person implements Serializable{
     public List<Discipline> getAssociatedDisciplines(){
 		return this.associatedDisciplines;
 	}
+    
+    public void setAssociatedDiscipline(Discipline discipline) {
+    	this.associatedDisciplines.add(discipline);
+    }
+    
+    
     
     public int getNumberOfAssociatedPeriods() {
     	Map<String,Period> periods = new HashMap<>();
@@ -43,7 +47,7 @@ public class Person implements Serializable{
     	return periods.size();
     }
     
-    public void findAssociatedDisciplines(Map<String, Discipline> disciplines) {}
+ 
     
     
 }

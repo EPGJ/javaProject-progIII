@@ -27,7 +27,7 @@ public class Report implements Serializable {
 		System.out.println("Nome: " + teacher.getFullName());
 		System.out.println("Numero de disciplinas associadas: " + teacher.getAssociatedDisciplines().size());
 		System.out.println("Numero de periodos que possui disciplinas associadas: "+ teacher.getNumberOfAssociatedPeriods());
-		System.out.println("Media de atividades por disciplina: " + teacher.calculateAvarageActivitiesByDiscipline());
+		System.out.println("Media de atividades por disciplina: " + String.format("%.1f",teacher.calculateAvarageActivitiesPerDiscipline()));
 		System.out.println("Percentual de atividades sincronas: "+ percentageSynchronousActivities + "%");
 		System.out.println("Percentual de atividades assincronas: "+ (100.0- percentageSynchronousActivities) + "%");
 		System.out.println("Media de notas recebidas em avaliacoes discentes: " + teacher.calculateAverageStudentsRating()+"\n");
