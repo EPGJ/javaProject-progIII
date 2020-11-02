@@ -17,16 +17,9 @@ public class Main implements Serializable{
         ReadData readData = new ReadData();
         Menu menu = new Menu(readData);
         Utils util = new Utils(readData);
-        util.cleanConsole();		
-        
-        double num = 12.25;
-        System.out.println(num);
-        System.out.println(String.format("%.1f",num));
-      
-
+        util.cleanConsole();		     
         
 
-		
         do {
             menu.printMenuOptions();
             option = readData.readUserDecision(11);  // o usuario possui onze opcoes de escolha

@@ -16,8 +16,8 @@ import trabalhoprog3java.domain.Teacher;
 import trabalhoprog3java.domain.activity.Activity;
 import trabalhoprog3java.domain.activity.ActivityRating;
 import trabalhoprog3java.domain.activity.Lesson;
-import trabalhoprog3java.domain.activity.Test;
-import trabalhoprog3java.domain.activity.Work;
+import trabalhoprog3java.domain.activity.evaluative.Test;
+import trabalhoprog3java.domain.activity.evaluative.Work;
 import trabalhoprog3java.domain.activity.study.Material;
 import trabalhoprog3java.domain.activity.study.Study;
 import trabalhoprog3java.exception.ActivityAlreadyEvaluatedException;
@@ -378,8 +378,12 @@ public class Menu implements Serializable {
 			Test test = new Test(name, discipline, date, time, testContent);
 
 			discipline.setActivity(test);
-			test.setActivityNumber(discipline.getActivities().size());
+			for(Student student: discipline.getEnrolledStudents()) {
+				student.setAvaliativeActivities(test);
+			}
 
+			test.setActivityNumber(discipline.getActivities().size());
+			
 			activities.add(test);
 		}
 
@@ -442,12 +446,16 @@ public class Menu implements Serializable {
 			System.out.printf("Carga horaria: ");
 			double workload = readData.readDouble();
 
-			Work newWork = new Work(name, discipline, date, maxNumber, workload);
+			Work work = new Work(name, discipline, date, maxNumber, workload);				
+			
+			discipline.setActivity(work);
+			for(Student student: discipline.getEnrolledStudents()) {
+				student.setAvaliativeActivities(work);
+			}
+			
+			work.setActivityNumber(discipline.getActivities().size());
 
-			discipline.setActivity(newWork);
-			newWork.setActivityNumber(discipline.getActivities().size());
-
-			activities.add(newWork);
+			activities.add(work);
 		}
 
 	}
@@ -593,6 +601,7 @@ public class Menu implements Serializable {
 				
 				util.pressAnyKeyToContinue();
 
+				
 				break;
 
 			case 3:
@@ -600,14 +609,17 @@ public class Menu implements Serializable {
 				System.out.println("\nEstudantes: \n");
 
 				List<Student> studenstList = new ArrayList<>(students.values());
-//				Collections.sort(studentsList);
+				Collections.sort(studenstList);
+			
 					
 				for(Student student: studenstList) {
 					report.studentsReport(student);
 				}
 				
+				
 				util.pressAnyKeyToContinue();
 
+				
 				break;
 
 			case 4:

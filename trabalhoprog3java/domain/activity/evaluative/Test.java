@@ -1,23 +1,18 @@
-package trabalhoprog3java.domain.activity;
+package trabalhoprog3java.domain.activity.evaluative;
 import java.util.Date;
 
 import trabalhoprog3java.domain.Discipline;
+import trabalhoprog3java.domain.activity.Activity;
 
 
-public class Test extends Activity {
-	private Date date;
+public class Test extends EvaluativeActivity {
 	private String time;
 	private String testContent;
 	
 	public Test(String name, Discipline discipline, Date date, String time, String testContent) {
-		super(name, discipline,true,true);
-		this.date = date;
+		super(name, discipline,date); //eh  avaliativa e sincrona 
 		this.time = time;
 		this.testContent = testContent;
-	}
-
-	public Date getDate() {
-		return date;
 	}
 
 

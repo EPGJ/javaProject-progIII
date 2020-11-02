@@ -10,9 +10,6 @@ public class Teacher extends Person implements Comparable<Teacher> {
 
 	private String login;
 	private String webPage;
-	
-
-	
 
 	public Teacher(String login, String fullName) {
 		super(fullName);
@@ -58,16 +55,18 @@ public class Teacher extends Person implements Comparable<Teacher> {
 
 	public double calculateAvarageActivitiesPerDiscipline() {
 		double average = 0;
-
-		for (Discipline discipline : super.getAssociatedDisciplines()) {
-			average += discipline.getActivities().size();
+		int disciplineQuantity = super.getAssociatedDisciplines().size();
+		if(disciplineQuantity==0) {
+			return 0;
 		}
-		int quantidade = super.getAssociatedDisciplines().size();
-		if(quantidade!=0) {			
-			average /= super.getAssociatedDisciplines().size();
+		else {
+			for (Discipline discipline : super.getAssociatedDisciplines()) {
+				average += discipline.getActivities().size();
+			}
+			average /= disciplineQuantity;
 			return average;
+			
 		}
-		return 0;
 	}
 
 	public double calculatePercentageSynchronousActivities() {
@@ -80,8 +79,12 @@ public class Teacher extends Person implements Comparable<Teacher> {
 			totalSynchronousActivities += discipline.getTotalSynchronousActivities();
 
 		}
-
-		return ((totalSynchronousActivities / totalActivities) * 100);
+		
+		if(totalActivities ==0) {
+			return -1;
+		}else {
+			return ((totalSynchronousActivities / totalActivities) * 100);
+		}
 	}
 
 	
@@ -102,11 +105,16 @@ public class Teacher extends Person implements Comparable<Teacher> {
 		double numberEvaluations= studentsRating.size();
 		double sumEvaluations=0;
 		
-		for(ActivityRating activityRating: studentsRating) {
-			sumEvaluations+=activityRating.getGrade();
+		if(numberEvaluations == 0) {
+			return 0;
 		}
-		
-		return (sumEvaluations/numberEvaluations);
+		else {
+			for(ActivityRating activityRating: studentsRating) {
+				sumEvaluations+=activityRating.getGrade();
+			}
+			
+			return (sumEvaluations/numberEvaluations);
+		}
 	}
 
 	@Override
