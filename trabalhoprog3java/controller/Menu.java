@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import trabalhoprog3java.controller.util.SortTeachersDisciplines;
+import trabalhoprog3java.controller.util.Utils;
 import trabalhoprog3java.domain.Discipline;
 import trabalhoprog3java.domain.Period;
 import trabalhoprog3java.domain.Student;
@@ -572,7 +574,7 @@ public class Menu implements Serializable {
 				+ "Estatisticas dos estudantes\n" + "Estatisticas das disciplinas de um docente\n");
 
 		int userDecision = readData.readUserDecision(5); // o usuario possui cinco opcoes de escolha
-		try {
+	
 			switch (userDecision) {
 
 			case 1:
@@ -608,39 +610,30 @@ public class Menu implements Serializable {
 				System.out.println("\n\n\tEstatisticas dos estudantes");
 				System.out.println("\nEstudantes: \n");
 
-				List<Student> studenstList = new ArrayList<>(students.values());
-				Collections.sort(studenstList);
-			
+				List<Student> studentList = new ArrayList<>(students.values());
+				Collections.sort(studentList);
 					
-				for(Student student: studenstList) {
+				for(Student student: studentList) {
 					report.studentsReport(student);
 				}
 				
-				
 				util.pressAnyKeyToContinue();
-
 				
 				break;
 
 			case 4:
-
-				listTeachers();
-				System.out.printf("Digite o login institucional do docente: ");
-				String teacherReference = readData.readString();
-				Teacher teacher = teachers.get(teacherReference);
-				if (teacher == null) {
-					throw new InvalidReferenceException(teacherReference);
+				System.out.println("\n\n\tEstatisticas das disciplinas \n");
+				List<Discipline> disciplineList = new ArrayList<>(disciplines.values());
+				Collections.sort(disciplineList, new SortTeachersDisciplines());
+				
+				
+				for(Discipline discipline: disciplineList) {
+					report.disciplinesReport(discipline);
 				}
-				else {
-					report.teachersDisciplinesReport(teacher);
-					util.pressAnyKeyToContinue();
-				}
+				
+				util.pressAnyKeyToContinue();
 				break;
-			}
-
-		} catch (InvalidReferenceException e) {
-			System.out.println("Referencia nao cadastrada no sistema: " + e.getReference());
-		}
+			}	
 
 	}
 

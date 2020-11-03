@@ -2,7 +2,7 @@ package trabalhoprog3java;
 
 import trabalhoprog3java.controller.Menu;
 import trabalhoprog3java.controller.ReadData;
-import trabalhoprog3java.controller.Utils;
+import trabalhoprog3java.controller.util.Utils;
 
 import java.io.Serializable;
 import java.util.Date;

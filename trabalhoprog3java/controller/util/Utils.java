@@ -1,8 +1,10 @@
-package trabalhoprog3java.controller;
+package trabalhoprog3java.controller.util;
 
 import java.util.Map;
 import java.util.Scanner;
 
+import trabalhoprog3java.controller.Menu;
+import trabalhoprog3java.controller.ReadData;
 import trabalhoprog3java.domain.Discipline;
 import trabalhoprog3java.domain.Student;
 import trabalhoprog3java.domain.activity.Activity;

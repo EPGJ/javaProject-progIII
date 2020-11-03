@@ -121,8 +121,15 @@ public class Discipline implements Serializable, Comparable<Discipline>{
 	}
     
     public double calculatePercentageSynchronousActivities() {
+    	double quantitySyncActivities = getTotalSynchronousActivities();
+    	double quantityAtivities = activities.size();
     	
-    	return ((getTotalSynchronousActivities()/activities.size())*100.0);
+    	if(quantityAtivities==0) {
+    		return -1;
+    	}
+    	else {    		
+    		return ((quantitySyncActivities/quantityAtivities)*100.0);
+    	}
     }
     
     public double getWorkLoad() {

@@ -1,11 +1,13 @@
 package trabalhoprog3java.controller;
 import java.io.Serializable;
+import java.text.DateFormat;
 
 import trabalhoprog3java.domain.Discipline;
 import trabalhoprog3java.domain.Period;
 import trabalhoprog3java.domain.Student;
 import trabalhoprog3java.domain.Teacher;
 import trabalhoprog3java.domain.activity.Activity;
+import trabalhoprog3java.domain.activity.evaluative.EvaluativeActivity;
 
 public class Report implements Serializable {
 
@@ -50,29 +52,38 @@ public class Report implements Serializable {
 		System.out.println("Media de avaliacoes realizadas por disciplina: "+ String.format("%.1f",student.calculateAverageNumberDoneActivitiesPerDiscipline())+"\n");
 	}
 
-	public void teachersDisciplinesReport(Teacher teacher) {
-
-		System.out.println("\n\n\tEstatisticas das disciplinas de um professor \n");
-		System.out.println("Nome do professor: " + teacher.getFullName());
-		System.out.println("DISCIPLINAS: \n");
-
-		for(Discipline discipline: teacher.getAssociatedDisciplines()) {
-			System.out.println("Periodo academico: "+ discipline.getPeriod().getPeriodReference()
-					+ "\nCodigo da disciplina: " + discipline.getCode() 
-					+ "\nNome da disciplina: " + discipline.getName() 
-					+ "\nNumero total de atividades: " + discipline.getActivities().size()
-					+ "\nPercentual de atividades sincronas: " + discipline.calculatePercentageSynchronousActivities()
-					+ "\nPercentual de atividades assincronas: " + (100 -discipline.calculatePercentageSynchronousActivities())
-					+ "\nCarga horaria da disciplina: " + discipline.getWorkLoad()
-				);
-			System.out.println("\n\tAtividade");
-			for(Activity activity: discipline.getActivities()) {
-				if(activity.isAvaliative()) {
-					System.out.println("Data: "+ activity.getActivityData());
-					System.out.println("Nome: "+ activity.getName());
-				}
+	public void disciplinesReport(Discipline discipline) {
+		DateFormat f = DateFormat.getDateInstance(DateFormat.SHORT);
+		double percentageSynchronousActivities = discipline.calculatePercentageSynchronousActivities();
+		double percentageAsyncronousActivities;
+		if(percentageSynchronousActivities == -1) {
+			percentageSynchronousActivities = 0;
+			percentageAsyncronousActivities = 0;
+		}
+		else {
+			percentageAsyncronousActivities = 100.0 - percentageSynchronousActivities;
+		}
+		
+		System.out.println("\n\tDisciplina \n");
+		System.out.println("Login do docente: " + discipline.getResponsableTeacher().getLogin()
+				+ "\nPeriodo academico: "+ discipline.getPeriod().getPeriodReference()
+				+ "\nCodigo da disciplina: " + discipline.getCode() 
+				+ "\nNome da disciplina: " + discipline.getName() 
+				+ "\nNumero total de atividades: " + discipline.getActivities().size()
+				+ "\nPercentual de atividades sincronas: " + percentageSynchronousActivities
+				+ "\nPercentual de atividades assincronas: " + percentageAsyncronousActivities
+				+ "\nCarga horaria da disciplina: " + discipline.getWorkLoad()+ "\n"
+			);
+		if(discipline.getActivities().size()>0) {
+			System.out.println("\n\tAtividades\n");
+		}
+		for(Activity activity: discipline.getActivities()) {
+			if(activity.isAvaliative()) {
+				
+				EvaluativeActivity activityAux = (EvaluativeActivity) activity;
+				System.out.println("Data: "+ f.format(activityAux.getDate()));
+				System.out.println("Nome: "+ activityAux.getName()+ "\n");
 			}
-			
 		}
 
 	}
