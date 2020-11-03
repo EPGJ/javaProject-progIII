@@ -49,7 +49,8 @@ public class Report implements Serializable {
 		System.out.println("Matricula: " + student.getRegistrationCode());
 		System.out.println("Nome: " + student.getFullName());
 		System.out.println("Media de disciplinas matriculadas por periodo academico: "+ String.format("%.1f",student.calculateAverageEnrolledDisciplinesByPeriod()));
-		System.out.println("Media de avaliacoes realizadas por disciplina: "+ String.format("%.1f",student.calculateAverageNumberDoneActivitiesPerDiscipline())+"\n");
+		System.out.println("Media de avaliacoes realizadas por disciplina: "+ String.format("%.1f",student.calculateAverageNumberDoneActivitiesPerDiscipline()));
+		System.out.println("Media de notas: "+ String.format("%.1f",student.calculateAverageStudentRating())+"\n");
 	}
 
 	public void disciplinesReport(Discipline discipline) {

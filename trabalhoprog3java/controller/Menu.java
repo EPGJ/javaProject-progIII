@@ -550,11 +550,13 @@ public class Menu implements Serializable {
 							}
 							else {
 								ActivityRating activityRating = new ActivityRating(student, discipline, activityGrade);
+								student.setEvaluation(activityRating);
 								activity.setSudentEvaluation(activityRating);
-								System.out.println("sucesso ao avaliar atividade: ");
+								System.out.println("sucesso ao avaliar atividade ");
 							}
 							
 						}
+						
 						
 						
 					}
@@ -622,7 +624,7 @@ public class Menu implements Serializable {
 				break;
 
 			case 4:
-				System.out.println("\n\n\tEstatisticas das disciplinas \n");
+				System.out.println("\n\nEstatisticas das disciplinas \n");
 				List<Discipline> disciplineList = new ArrayList<>(disciplines.values());
 				Collections.sort(disciplineList, new SortTeachersDisciplines());
 				
