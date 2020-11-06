@@ -1,0 +1,8 @@
+Disciplina (Código-Período);Nome;Tipo;Data / Prazo;Hora;Materiais / Conteúdo;Tamanho Máximo Grupos;Carga Horária Esperada
+INF09331-2020/E;Aula 1: introdução à Orientação a Objetos;A;11/09/2020;09:00;;;
+INF09331-2020/E;Aula 2: da programação estruturada à OO;A;15/09/2020;11:00;;;
+INF09331-2020/E;Estudo: variáveis primitivas e controle de fluxo;E;;;[Apostila Caelum, cap. 3](https://www.caelum.com.br/apostila/apostila-java-orientacao-objetos.pdf)[Curso Loiane, partes 10-18](https://www.youtube.com/playlist?list=PLGxZ4Rq3BOBq0KXHsp5J3PxyFaBIXVs3r);;
+INF09331-2020/E;Estudo: orientação a objetos básica / vetores e coleções;E;;;[Apostila Caelum, cap. 4](https://www.caelum.com.br/apostila/apostila-java-orientacao-objetos.pdf)[Curso Loiane, partes 24-27, 30, 36](https://www.youtube.com/playlist?list=PLGxZ4Rq3BOBq0KXHsp5J3PxyFaBIXVs3r);;
+INF09331-2020/E;Trabalho Java;T;10/11/2020;;;3;20
+INF09331-2020/E;Trabalho C++;T;15/12/2020;;;3;20
+INF09331-2020/E;Prova Final;P;18/12/2020;09:00;Programação Orientada a Objetos: Classes e Objetos, Atributos e Métodos, Especificadores de Acesso, Herança, Classes e Métodos Abstratos, Polimorfismo, Classes e Métodos Genéricos, Tratamento de Exceções. Estudo aprofundado de Java e C++.;;

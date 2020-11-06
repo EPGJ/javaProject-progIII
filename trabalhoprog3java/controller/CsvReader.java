@@ -2,6 +2,7 @@ package trabalhoprog3java.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
@@ -10,12 +11,11 @@ public class CsvReader {
 	
 	private BufferedReader reader;
 	private String[] line;
-	private Map<String, String> fileList;
-	
 	
 
-	public CsvReader(Map<String, String> fileList) throws IOException {
-		this.setFileList(fileList);
+	public CsvReader(String path) throws IOException {
+		this.reader = new BufferedReader(new FileReader(path));
+		
 	}
 	
 	public String[] nextLine(){
@@ -26,13 +26,10 @@ public class CsvReader {
 			return null;
 		}
 	}
-
-	public Map<String, String> getFileList() {
-		return fileList;
+	
+	public void changeFile(String path) throws IOException {
+		this.reader = new BufferedReader(new FileReader(new File(path)));
 	}
-
-	public void setFileList(Map<String, String> fileList) {
-		this.fileList = fileList;
-	}
+	
 	
 }

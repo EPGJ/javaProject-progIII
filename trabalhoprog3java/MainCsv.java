@@ -14,18 +14,15 @@ public class MainCsv implements Serializable{
     	MenuCsv menu = new MenuCsv();
     	try {
     		menu.setFilesList(args);
+    		menu.readFiles();
     	}catch(ArrayIndexOutOfBoundsException e) {
     		System.out.println("Erro ao ler os parametros de entrada");
+    	}catch(IOException e) {
+    		System.out.println("Erro de I/O " + e.getMessage());
     	}
     	catch(Exception e) {
-    		System.out.println("Erro de I/O");
+    		System.out.println(e.getMessage());
     	}
-
-    	menu.fileList.forEach((key, file) ->
-    	System.out.println(file)
-    	);
-    	
-    	
 
     }
 }

@@ -25,6 +25,8 @@ import trabalhoprog3java.domain.activity.study.Material;
 import trabalhoprog3java.domain.activity.study.Study;
 import trabalhoprog3java.exception.ActivityAlreadyEvaluatedException;
 import trabalhoprog3java.exception.InvalidReferenceException;
+import trabalhoprog3java.exception.NotAnOptionException;
+import trabalhoprog3java.exception.NotCharException;
 import trabalhoprog3java.exception.ReferenceAlredyExistsException;
 
 public class MenuCsv implements Serializable {
@@ -33,188 +35,170 @@ public class MenuCsv implements Serializable {
 	Map<String, Period> periods;
 	Map<String, Discipline> disciplines;
 	Map<Integer, Student> students;
-	Map<String, Teacher> teachers; 
+	Map<String, Teacher> teachers;
 	List<Activity> activities;
 	Utils util;
 	Report report;
-	CsvReader readData;
-   	public Map<String, String> fileList;
+	CsvReader input;
+	public Map<String, String> fileList;
+	DataValidation validateData;
 
 	public MenuCsv() throws IOException {
-		
+
 		this.report = new Report();
 		this.periods = new HashMap<>();
-		this.disciplines  = new HashMap<>();
+		this.disciplines = new HashMap<>();
 		this.students = new HashMap<>();
 		this.teachers = new HashMap<>();
-		this.activities = new ArrayList<>(); 
-		this.fileList  = new HashMap<>();
+		this.activities = new ArrayList<>();
+		this.fileList = new HashMap<>();
+		this.validateData = new DataValidation();
 	}
-
 
 	public void setFilesList(String[] args) {
-		for(int i =0;i< args.length;i++) {
+		for (int i = 0; i < args.length; i++) {
 
-    		if(args[i].equals("-p")) this.fileList.put("periodsFile", args[i+1]);
-    		if(args[i].equals("-d")) this.fileList.put("teachersFile", args[i+1]);
-    		if(args[i].equals("-o")) this.fileList.put("diciplinesFile", args[i+1]);
-    		if(args[i].equals("-e")) this.fileList.put("studentsFile", args[i+1]);
-    		if(args[i].equals("-m")) this.fileList.put("enrollmentsFile", args[i+1]);
-    		if(args[i].equals("-a")) this.fileList.put("activitiesFile", args[i+1]);
-    		if(args[i].equals("-n")) this.fileList.put("activitiesRatingFile", args[i+1]);
-    		if(args[i].equals("--read-only")) {}
-    		if(args[i].equals("--write-only")) {}		
-    	}
+			if (args[i].equals("-p"))
+				this.fileList.put("periodsFile", args[i + 1]);
+			if (args[i].equals("-d"))
+				this.fileList.put("teachersFile", args[i + 1]);
+			if (args[i].equals("-o"))
+				this.fileList.put("disciplinesFile", args[i + 1]);
+			if (args[i].equals("-e"))
+				this.fileList.put("studentsFile", args[i + 1]);
+			if (args[i].equals("-m"))
+				this.fileList.put("enrollmentsFile", args[i + 1]);
+			if (args[i].equals("-a"))
+				this.fileList.put("activitiesFile", args[i + 1]);
+			if (args[i].equals("-n"))
+				this.fileList.put("activitiesRatingFile", args[i + 1]);
+			if (args[i].equals("--read-only")) {
+			}
+			if (args[i].equals("--write-only")) {
+			}
+		}
 	}
-	public void readFiles() {
-		this.fileList.forEach((key, file)->
+
+	public void readFiles() throws IOException, Exception {
+		String path = "../Testes/01/in/";
+
+		periodsRegister();
+		teachersRegister();
+		disciplinesRegister();
+		studentsRegister();
+
+//		if (teachers.size() > 0) {
+//			System.out.println("\n\nDocentes cadastrados: ");
+//			teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
+//
+//		}
+//		if (periods.size() > 0) {
+//			System.out.println("\n\nPeriodos registrados: ");
+//			periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
+//		}
+//		if (disciplines.size() > 0) {
+//			System.out.println("\n\nDisciplinas cadastradas: ");
+//
+//			disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
+//		}
+		
+	}
+
+	public void periodsRegister() throws NumberFormatException, NotAnOptionException, NotCharException,
+			ReferenceAlredyExistsException, IOException {
+		this.input = new CsvReader(this.fileList.get("periodsFile"));
+		input.nextLine(); // limpa cabecalho
+		String[] periodData = input.nextLine();
+		do {
+
+			int year = validateData.validateYear(periodData[0]);
+			char semester = validateData.validateChar(periodData[1]);
+
+			Period period = new Period(year, semester);
+			if (periods.get(period.getPeriodReference()) != null) {
+				throw new ReferenceAlredyExistsException(period.getPeriodReference());
+			}
+			periods.put(period.getPeriodReference(), period);
+			periodData = input.nextLine();
+		} while (periodData != null);
+	}
+
+	public void teachersRegister() throws IOException, InvalidReferenceException, ReferenceAlredyExistsException {
+		this.input = new CsvReader(this.fileList.get("teachersFile"));
+		input.nextLine();
+		String[] teacherData = input.nextLine();
+		do {
+
+			String login = validateData.validateLogin(teacherData[0]);
+			String fullName = teacherData[1];
+			Teacher teacher;
+			if (teacherData[2] != null) {
+				String webPage = teacherData[2];
+				teacher = new Teacher(login, fullName, webPage);
+			} else {
+				teacher = new Teacher(login, fullName);
+			}
+
+			if (teachers.get(teacher.getTeacherReference()) != null) {
+				throw new ReferenceAlredyExistsException(teacher.getTeacherReference());
+			}
+			teachers.put(teacher.getTeacherReference(), teacher);
+			teacherData = input.nextLine();
+		} while (teacherData != null);
+
+	}
+
+	public void disciplinesRegister() throws IOException, InvalidReferenceException, ReferenceAlredyExistsException {
+		this.input = new CsvReader(this.fileList.get("disciplinesFile"));
+		input.nextLine();
+		String[] disciplineData = input.nextLine();
+		do {
+			String periodReference = disciplineData[0];
+			String code = disciplineData[1];
+			String name = disciplineData[2];
+			String responsableTeacher = validateData.validateLogin(disciplineData[3]);
+			Teacher teacher = teachers.get(responsableTeacher);
+			if (teacher == null) {
+				throw new InvalidReferenceException(responsableTeacher);
+			}
+
+			Period period = periods.get(periodReference);
+			if (period == null) {
+				throw new InvalidReferenceException(periodReference);
+			}
+			Discipline discipline = new Discipline(code, name, period, teachers.get(responsableTeacher));
+			if (disciplines.get(discipline.getDisciplineReference()) != null) {
+				throw new ReferenceAlredyExistsException(discipline.getDisciplineReference());
+			}
+			teacher.setAssociatedDiscipline(discipline);
+			disciplines.put(discipline.getDisciplineReference(), discipline);
+			period.setDiscipline(discipline);		
 			
-		);
-		
-		
+			disciplineData = input.nextLine();
+		} while (disciplineData != null);
 	}
 	
-	
-	
-	
-	public void periodRegister() {
-//		try {
-//			if (userDecision == 1) {
-//				
-//				int year = readData.readYear();
-//
-//				if (year != -1) {
-//
-//					System.out.printf("Semestre: ");
-//					char semester = readData.readChar();
-//
-//					if (semester != 0) {
-//
-//						Period period = new Period(year, semester);
-//
-//						if (periods.get(period.getPeriodReference()) != null) {
-//							throw new ReferenceAlredyExistsException(period.getPeriodReference());
-//						}
-//						periods.put(period.getPeriodReference(), period);
-//						
-//					}
-//				}
-//			}
-//
-//		} catch (ReferenceAlredyExistsException e) {
-//			System.out.println(e.getMessage());
-//		}
-	}
 
-//	public void teacherRegister() {
-//		try {
-//			listTeachers();
-//			printItemOptions("Registrar novo professor\n");
-//			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
-//			if (userDecision == 1) {
-//
-//				System.out.printf("\nLogin: ");
-//				String login = readData.readLogin();
-//
-//				if (login != "invalid") {
-//
-//					System.out.printf("Nome Completo: ");
-//					String fullName = readData.readString();
-//					System.out.printf("Deseja adicionar pagina web? \n1 - Sim\n2 - Nao\nDigite sua escolha: ");
-//					int response = readData.readUserDecision(2);
-//
-//					if (response == 1) {
-//
-//						System.out.printf("Pagina Web: ");
-//						String webPage = readData.readString();
-//
-//						Teacher teacher = new Teacher(login, fullName, webPage);
-//						if (teachers.get(teacher.getTeacherReference()) != null) {
-//							throw new ReferenceAlredyExistsException(teacher.getTeacherReference());
-//						}
-//						teachers.put(teacher.getTeacherReference(), teacher);
-//
-//					} else {
-//						Teacher teacher = new Teacher(login, fullName);
-//						if (teachers.get(teacher.getTeacherReference()) != null) {
-//							throw new ReferenceAlredyExistsException(teacher.getTeacherReference());
-//						}
-//						teachers.put(teacher.getTeacherReference(), teacher);
-//					}
-//
-//					System.out.println("Sucesso ao cadastrar novo Professor");
-//				}
-//			}
-//		} catch (ReferenceAlredyExistsException e) {
-//			System.out.println(e.getMessage());
-//		}
-//
-//	}
-//
-//	public void disciplineRegister() {
-//		try {
-//			listDisciplines();
-//			printItemOptions("Registrar nova disciplina\n");
-//
-//			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
-//			if (userDecision == 1) {
-//
-//				System.out.printf("\nCodigo: ");
-//				String code = readData.readString();
-//
-//				System.out.printf("Nome: ");
-//				String name = readData.readString();
-//
-//				System.out.printf("Periodo (ex: 2019/1): ");
-//				String periodReference = readData.readPeriod();
-//
-//				if (periodReference != "invalid") {
-//
-//					System.out.printf("Login institucional do professor responsavel: ");
-//					String responsableTeacher = readData.readLogin();
-//					if (responsableTeacher != "invalid") {
-//						Teacher teacher = teachers.get(responsableTeacher);
-//						
-//						if (teacher == null) {
-//							throw new InvalidReferenceException(responsableTeacher);
-//						}
-//
-//						Period period = periods.get(periodReference);
-//						if (period == null) {
-//							throw new InvalidReferenceException(periodReference);
-//						}
-//						Discipline discipline = new Discipline(code, name, period, teachers.get(responsableTeacher));
-//						if (disciplines.get(discipline.getDisciplineReference()) != null) {
-//							throw new ReferenceAlredyExistsException(discipline.getDisciplineReference());
-//						}
-//						
-//						
-//						System.out.println(discipline.getName());
-//						teacher.setAssociatedDiscipline(discipline);
-//						disciplines.put(discipline.getDisciplineReference(), discipline);
-//						period.setDiscipline(discipline);
-//						System.out.println("Sucesso ao cadastrar nova disciplina");
-//					}
-//				}
-//			}
-//		} catch (InvalidReferenceException e) {
-//			System.out.println("Referencia nao cadastrada no sistema: " + e.getReference());
-//
-//		} catch (ReferenceAlredyExistsException e) {
-//			System.out.println(e.getMessage());
-//
-//		}
-//
-//	}
-//
-//	public void studentRegister() {
-//		try {
-//			listStudents();
-//			printItemOptions("Registrar novo estudante\n");
-//			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
-//
-//			if (userDecision == 1) {
-//
+	public void studentsRegister() throws IOException, ReferenceAlredyExistsException {
+		this.input = new CsvReader(this.fileList.get("studentsFile"));
+		input.nextLine();
+		String[] studentsData = input.nextLine();
+		do {
+			int code =  validateData.validateInt(studentsData[0]);
+			String fullName = studentsData[1];
+			Student student = new Student(code, fullName);
+			if (students.get(student.getStudentReference()) != null) {
+				throw new ReferenceAlredyExistsException(String.valueOf(code));
+			}
+			students.put(student.getStudentReference(), student);
+			System.out.println("Sucesso ao cadastrar novo estudante");
+			
+			studentsData = input.nextLine();
+		} while (studentsData != null);
+	}
+	
+
+
 //				System.out.printf("\nMatricula: ");
 //				int code = readData.readInt();
 //				if (code != -1) {

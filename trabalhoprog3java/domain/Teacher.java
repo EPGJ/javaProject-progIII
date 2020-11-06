@@ -44,7 +44,7 @@ public class Teacher extends Person implements Comparable<Teacher> {
 
 	public String getTeacherData() {
 		if (this.webPage != null) {
-			return "\nNome: " + this.getFullName() + "\nPagina Web: " + this.getWebPage();
+			return "\nNome: " + this.getFullName() + "\nPagina Web: " + this.getWebPage() + "\nlogin: " + this.getLogin() ;
 		} else {
 			return "\nNome: " + this.getFullName();
 		}
