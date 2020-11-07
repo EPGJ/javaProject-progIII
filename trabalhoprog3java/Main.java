@@ -1,6 +1,6 @@
 package trabalhoprog3java;
 
-import trabalhoprog3java.controller.Menu;
+//import trabalhoprog3java.controller.Menu;
 import trabalhoprog3java.controller.ReadData;
 import trabalhoprog3java.controller.util.Utils;
 
@@ -15,54 +15,54 @@ public class Main implements Serializable{
 		Locale.setDefault(new Locale("pt", "BR"));
         int option = 0;
         ReadData readData = new ReadData();
-        Menu menu = new Menu(readData);
-        Utils util = new Utils(readData);
-        util.cleanConsole();		     
+//        Menu menu = new Menu(readData);
+//        Utils util = new Utils(readData);
+//        util.cleanConsole();		     
         
 
         do {
-            menu.printMenuOptions();
+//            menu.printMenuOptions();
             option = readData.readUserDecision(11);  // o usuario possui onze opcoes de escolha
 
 
             switch (option) {
        
                 case 1:
-                	menu.periodRegister();
+//                	menu.periodRegister();
                 	break;
       
                 case 2:
-                    menu.teacherRegister();
+//                    menu.teacherRegister();
                     break;
             
                 case 3:
-                    menu.disciplineRegister();
+//                    menu.disciplineRegister();
                     break;
 
                 case 4:
-                    menu.studentRegister();
+//                    menu.studentRegister();
                     break;
 
                 case 5:
-                    menu.enrollStudent();
+//                    menu.enrollStudent();
                     break;
 
                 case 6:
-                	menu.activityRegister();
+//                	menu.activityRegister();
                     break;
 
                 case 7:
-                	menu.activityRating();
+//                	menu.activityRating();
                     break;
                 
                 case 8:
-                    menu.report();
+//                    menu.report();
                     break;
                 case 9:
-                    util.serialize(menu);
+//                    util.serialize(menu);
                     break;
                 case 10:
-                    menu  = util.deserialize();
+//                    menu  = util.deserialize();
                     break;
             
                 default:

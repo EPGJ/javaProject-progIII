@@ -81,6 +81,8 @@ public class Discipline implements Serializable, Comparable<Discipline>{
     }
     public String getDisciplineData(){
     	
+//    	System.out.println("entrou1");
+    	
     	String disciplineData = "\nCodigo: "+this.code+"\nNome: "+this.name+"\nPeriodo: "
     							+this.period.getPeriodReference()+"\nProfessor responsavel: "+this.responsableTeacher.getFullName();
     	if(students.size()>0 ) {
@@ -89,7 +91,7 @@ public class Discipline implements Serializable, Comparable<Discipline>{
     			disciplineData += "\n\tMatricula do estudante: "+students.get(i).getStudentReference();
     		}	
     	}
-    	
+//    	System.out.println("entrou2");
     	if(activities.size()>0) {
     		disciplineData += "\nAtividades cadastradas: ";
     		for(int i = 0; i < activities.size();i++) {

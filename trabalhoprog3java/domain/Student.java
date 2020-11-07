@@ -9,18 +9,18 @@ import trabalhoprog3java.domain.activity.evaluative.EvaluativeActivity;
 
 public class Student extends Person implements Comparable<Student> {
 
-	private int registrationCode;
+	private long registrationCode;
 	private List<EvaluativeActivity> avaliativeActivities;
 	private List<ActivityRating> evaluations;
 
-	public Student(int registrationCode, String fullName) {
+	public Student(long code, String fullName) {
 		super(fullName);
-		this.registrationCode = registrationCode;
+		this.registrationCode = code;
 		this.avaliativeActivities = new ArrayList<>();
 		this.evaluations = new ArrayList<>();
 	}
 
-	public int getRegistrationCode() {
+	public long getRegistrationCode() {
 		return registrationCode;
 	}
 
@@ -28,7 +28,7 @@ public class Student extends Person implements Comparable<Student> {
 		this.registrationCode = registrationCode;
 	}
 
-	public int getStudentReference() {
+	public long getStudentReference() {
 		return this.registrationCode;
 	}
 

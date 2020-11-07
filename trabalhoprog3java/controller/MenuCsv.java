@@ -3,6 +3,7 @@ package trabalhoprog3java.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class MenuCsv implements Serializable {
 	private static final long serialVersionUID = 1L;
 	Map<String, Period> periods;
 	Map<String, Discipline> disciplines;
-	Map<Integer, Student> students;
+	Map<Long, Student> students;
 	Map<String, Teacher> teachers;
 	List<Activity> activities;
 	Utils util;
@@ -53,6 +54,7 @@ public class MenuCsv implements Serializable {
 		this.activities = new ArrayList<>();
 		this.fileList = new HashMap<>();
 		this.validateData = new DataValidation();
+		this.util = new Utils();
 	}
 
 	public void setFilesList(String[] args) {
@@ -86,21 +88,35 @@ public class MenuCsv implements Serializable {
 		teachersRegister();
 		disciplinesRegister();
 		studentsRegister();
+		enrollStudents();
+		activitiesRegister();
 
-//		if (teachers.size() > 0) {
-//			System.out.println("\n\nDocentes cadastrados: ");
-//			teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
-//
-//		}
-//		if (periods.size() > 0) {
-//			System.out.println("\n\nPeriodos registrados: ");
-//			periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
-//		}
-//		if (disciplines.size() > 0) {
-//			System.out.println("\n\nDisciplinas cadastradas: ");
-//
-//			disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
-//		}
+		if (teachers.size() > 0) {
+			System.out.println("\n\nDocentes cadastrados: ");
+			teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
+
+		}
+		if (periods.size() > 0) {
+			System.out.println("\n\nPeriodos registrados: ");
+			periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
+		}
+		if (disciplines.size() > 0) {
+			System.out.println("\n\nDisciplinas cadastradas: ");
+
+			disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
+		}
+		if (students.size() > 0) {
+			System.out.println("\n\nEstudantes cadastrados: ");
+			students.forEach((key, student) -> System.out.println(student.getStudentData()));
+
+		}
+		if (!activities.isEmpty()) {
+			System.out.println("\n\nAtividades cadastradas: ");
+			activities.forEach(activity -> System.out.println(activity.getActivityData()));
+		}
+		
+			
+		
 		
 	}
 
@@ -172,202 +188,137 @@ public class MenuCsv implements Serializable {
 			}
 			teacher.setAssociatedDiscipline(discipline);
 			disciplines.put(discipline.getDisciplineReference(), discipline);
-			period.setDiscipline(discipline);		
-			
+			period.setDiscipline(discipline);
+
 			disciplineData = input.nextLine();
 		} while (disciplineData != null);
 	}
-	
 
-	public void studentsRegister() throws IOException, ReferenceAlredyExistsException {
+	public void studentsRegister() throws IOException, ReferenceAlredyExistsException, NumberFormatException {
 		this.input = new CsvReader(this.fileList.get("studentsFile"));
 		input.nextLine();
 		String[] studentsData = input.nextLine();
 		do {
-			int code =  validateData.validateInt(studentsData[0]);
+
+			long code = validateData.validateNumber(studentsData[0]);
 			String fullName = studentsData[1];
 			Student student = new Student(code, fullName);
 			if (students.get(student.getStudentReference()) != null) {
 				throw new ReferenceAlredyExistsException(String.valueOf(code));
 			}
 			students.put(student.getStudentReference(), student);
-			System.out.println("Sucesso ao cadastrar novo estudante");
-			
+
 			studentsData = input.nextLine();
 		} while (studentsData != null);
 	}
+
+	public void enrollStudents() throws IOException, InvalidReferenceException, ReferenceAlredyExistsException {
+		this.input = new CsvReader(this.fileList.get("enrollmentsFile"));
+		input.nextLine();
+		String[] enrollmentsData = input.nextLine();
+		do {
+			String disciplineReference = enrollmentsData[0];
+			long studentReference = validateData.validateNumber(enrollmentsData[1]);
+			Discipline discipline = disciplines.get(disciplineReference);
+			if (discipline == null) {
+				throw new InvalidReferenceException(disciplineReference);
+			}
+
+			Student student = students.get(studentReference);
+			if (student == null) {
+				throw new InvalidReferenceException(String.valueOf(studentReference));
+			}
+
+			if (util.isEnrolled(discipline, student)) {
+				throw new ReferenceAlredyExistsException(Long.toString(student.getStudentReference()));
+			}
+			student.setAssociatedDiscipline(discipline);
+			discipline.enrollStudent(student);
+			enrollmentsData = input.nextLine();
+		} while (enrollmentsData != null);
+	}
+
+	public void activitiesRegister() throws IOException, NotCharException, InvalidReferenceException, ParseException {
+		this.input = new CsvReader(this.fileList.get("activitiesFile"));
+		input.nextLine();
+		String[] activitiesData = input.nextLine();
+		do {
+			String disciplineReference = validateData.validateDisciplineReference(activitiesData[0]);
+			Discipline discipline = disciplines.get(disciplineReference);
+			if (discipline == null) {
+				throw new InvalidReferenceException(disciplineReference);
+			}
+
+			String name = activitiesData[1];
+			char type = validateData.validateChar(activitiesData[2]);
+
+			switch (type) {
+			case 'A':
+
+				Date date = validateData.validateDate(activitiesData[3]);
+				String time = validateData.validateTime(activitiesData[4]);
+
+				Lesson lesson = new Lesson(name, discipline, date, time);
+				discipline.setActivity(lesson);
+				lesson.setActivityNumber(discipline.getActivities().size());
+				this.activities.add(lesson);
+
+				break;
+
+			case 'E':
+
+				List<Material> materials = validateData.validateMaterials(activitiesData[5]);
+				Study study = new Study(name, discipline, materials);
+
+				discipline.setActivity(study);
+				study.setActivityNumber(discipline.getActivities().size());
+				activities.add(study);
+				
+				
+				break;
+
+			case 'P':
+				date = validateData.validateDate(activitiesData[3]);
+				time = validateData.validateTime(activitiesData[4]);
+				String content = activitiesData[5];
+
+				Test test = new Test(name, discipline, date, time, content);
+
+				discipline.setActivity(test);
+				for (Student student : discipline.getEnrolledStudents()) {
+					student.setAvaliativeActivities(test);
+				}
+
+				test.setActivityNumber(discipline.getActivities().size());
+				activities.add(test);
+
+				break;
+
+			case 'T':
+				date = validateData.validateDate(activitiesData[3]);
+				int maxNumber = (int) validateData.validateNumber(activitiesData[6]);
+				double workload = (double) validateData.validateDouble(activitiesData[7]);
+				Work work = new Work(name, discipline, date, maxNumber, workload);				
+				
+				discipline.setActivity(work);
+				for(Student student: discipline.getEnrolledStudents()) {
+					student.setAvaliativeActivities(work);
+				}
+				
+				work.setActivityNumber(discipline.getActivities().size());
 	
+				activities.add(work);
+				
+				break;
+
+			default:
+			}
+
+			activitiesData = input.nextLine();
+		} while (activitiesData != null);
+	}
 
 
-//				System.out.printf("\nMatricula: ");
-//				int code = readData.readInt();
-//				if (code != -1) {
-//
-//					System.out.printf("Nome completo: ");
-//					String fullName = readData.readString();
-//
-//					Student student = new Student(code, fullName);
-//					if (students.get(student.getStudentReference()) != null) {
-//						throw new ReferenceAlredyExistsException(String.valueOf(code));
-//					}
-//
-//					students.put(student.getStudentReference(), student);
-//					System.out.println("Sucesso ao cadastrar novo estudante");
-//				}
-//			}
-//
-//		} catch (ReferenceAlredyExistsException e) {
-//			System.out.println(e.getMessage());
-//		}
-//
-//	}
-//
-//	public void enrollStudent() {
-//		try {
-//			printItemOptions("Matricular estudante\n");
-//			int userDecision = readData.readUserDecision(2); // o usuario possui duas opcoes de escolha
-//
-//			if (userDecision == 1) {
-//
-//				System.out.printf("\nCodigo de matricula do estudante: ");
-//				int studentCode = readData.readInt();
-//				if (studentCode != -1) {
-//					System.out.printf("Codigo da disciplina: ");
-//					String disciplineCode = readData.readString();
-//
-//					System.out.printf("Periodo da disciplina: ");
-//					String disciplinePeriod = readData.readString();
-//
-//					Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, disciplines);
-//
-//					if (discipline == null)
-//						throw new InvalidReferenceException(disciplineCode + "-" + disciplinePeriod);
-//					else {
-//						Student student = util.findStudent(studentCode, students);
-//						if (student == null) {
-//							throw new InvalidReferenceException(String.valueOf(studentCode));
-//
-//						}
-//						if (util.isEnrolled(discipline, student)) {
-//							throw new ReferenceAlredyExistsException(String.valueOf(student.getStudentReference()));
-//						}
-//						student.setAssociatedDiscipline(discipline);
-//						discipline.enrollStudent(student);
-//						System.out.println("Sucesso ao matricular estudante");
-//					}
-//				}
-//
-//			}
-//
-//		} catch (InvalidReferenceException e) {
-//			System.out.println(e.getMessage());
-//		} catch (ReferenceAlredyExistsException e) {
-//			System.out.println("Matricula repetida: " + e.getReference());
-//		}
-//
-//	}
-//
-//	public void activityRegister() {
-//		listActivities();
-//		printItemOptions("Cadastrar aula\n" + "Cadastrar estudo\n" + "Cadastrar trabalho\n" + "Cadastrar prova\n");
-//		int userDecision = readData.readUserDecision(5); // o usuario possui cinco opcoes de escolha
-//
-//		try {
-//			switch (userDecision) {
-//			case 1:
-//				this.lessonRegister();
-//				break;
-//
-//			case 2:
-//				this.studyRegister();
-//				break;
-//
-//			case 3:
-//				this.workRegister();
-//				break;
-//
-//			case 4:
-//				this.testRegister();
-//				break;
-//
-//			}
-//
-//		} catch (InvalidReferenceException e) {
-//			System.out.println("Referencia nao cadastrada no sistema: " + e.getReference());
-//		}
-//
-//	}
-//
-//	public void testRegister() throws InvalidReferenceException {
-//
-//		System.out.printf("\nTitulo da prova: ");
-//		String name = readData.readString();
-//
-//		System.out.printf("Codigo da disciplina: ");
-//		String disciplineCode = readData.readString();
-//
-//		System.out.printf("Periodo da disciplina: ");
-//		String disciplinePeriod = readData.readString();
-//
-//		Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, this.disciplines);
-//		if (discipline == null) {
-//			throw new InvalidReferenceException(disciplineCode + "-" + disciplinePeriod);
-//		} else {
-//
-//			System.out.printf("Data da prova ( DD/MM/AAAA ): ");
-//			Date date = readData.readDate();
-//
-//			System.out.printf("horario da aula ( HH:MM ): ");
-//			String time = readData.readString();
-//
-//			System.out.printf("\nConteudo da prova: ");
-//			String testContent = readData.readString();
-//
-//			Test test = new Test(name, discipline, date, time, testContent);
-//
-//			discipline.setActivity(test);
-//			for(Student student: discipline.getEnrolledStudents()) {
-//				student.setAvaliativeActivities(test);
-//			}
-//
-//			test.setActivityNumber(discipline.getActivities().size());
-//			
-//			activities.add(test);
-//		}
-//
-//	}
-//
-//	public void lessonRegister() throws InvalidReferenceException {
-//
-//		System.out.printf("\nTema da aula: ");
-//		String name = readData.readString();
-//
-//		System.out.printf("Codigo da disciplina: ");
-//		String disciplineCode = readData.readString();
-//
-//		System.out.printf("Periodo da disciplina: ");
-//		String disciplinePeriod = readData.readString();
-//
-//		Discipline discipline = this.util.findDiscipline(disciplineCode, disciplinePeriod, this.disciplines);
-//		if (discipline == null) {
-//			throw new InvalidReferenceException(disciplineCode + "-" + disciplinePeriod);
-//		} else {
-//
-//			System.out.printf("Data da aula ( DD/MM/AAAA ): ");
-//			Date date = readData.readDate();
-//
-//			System.out.printf("horario da aula ( HH:MM ): ");
-//			String time = readData.readString();
-//
-//			Lesson lesson = new Lesson(name, discipline, date, time);
-//			if (discipline != null) {
-//				discipline.setActivity(lesson);
-//				lesson.setActivityNumber(discipline.getActivities().size());
-//
-//			}
-//			this.activities.add(lesson);
-//		}
-//	}
 //
 //	public void workRegister() throws InvalidReferenceException {
 //
@@ -407,51 +358,7 @@ public class MenuCsv implements Serializable {
 //		}
 //
 //	}
-//
-//	public void studyRegister() throws InvalidReferenceException {
-//		System.out.printf("\nTema a ser estudado: ");
-//		String name = readData.readString();
-//
-//		System.out.printf("Codigo da disciplina: ");
-//		String disciplineCode = readData.readString();
-//
-//		System.out.printf("Periodo da disciplina: ");
-//		String disciplinePeriod = readData.readString();
-//
-//		Discipline discipline = this.util.findDiscipline(disciplineCode, disciplinePeriod, this.disciplines);
-//		if (discipline == null) {
-//			throw new InvalidReferenceException(disciplineCode + "-" + disciplinePeriod);
-//		} else {
-//			List<Material> materials = new ArrayList<>();
-//			int option = 1;
-//			do {
-//
-//				materials.add(materialRegister());
-//				System.out.println("\nDeseja cadastrar outro material?\n1 - Sim\n2 - Nao\nDigite sua escolha: ");
-//				option = readData.readInt();
-//
-//			} while (option == 1);
-//
-//			Study study = new Study(name, discipline, materials);
-//
-//			discipline.setActivity(study);
-//			study.setActivityNumber(discipline.getActivities().size());
-//
-//			activities.add(study);
-//		}
-//
-//	}
-//
-//	public Material materialRegister() {
-//		System.out.printf("\nNome do material: ");
-//		String name = readData.readString();
-//
-//		System.out.printf("Link para o material: ");
-//		String link = readData.readString();
-//
-//		Material material = new Material(name, link);
-//		return material;
-//	}
+
 //
 //	public void activityRating() {
 //		try {

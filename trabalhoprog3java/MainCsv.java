@@ -16,12 +16,12 @@ public class MainCsv implements Serializable{
     		menu.setFilesList(args);
     		menu.readFiles();
     	}catch(ArrayIndexOutOfBoundsException e) {
-    		System.out.println("Erro ao ler os parametros de entrada");
+    		System.out.println(e+"Erro ao ler os parametros de entrada");
     	}catch(IOException e) {
     		System.out.println("Erro de I/O " + e.getMessage());
     	}
     	catch(Exception e) {
-    		System.out.println(e.getMessage());
+    		System.out.println(e);
     	}
 
     }

@@ -3,9 +3,14 @@ package trabalhoprog3java.controller;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
+
+
+import trabalhoprog3java.domain.activity.study.Material;
 import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.NotAnOptionException;
 import trabalhoprog3java.exception.NotCharException;
@@ -40,56 +45,73 @@ public class DataValidation implements Serializable {
 		}
 	}
 
-	public int validateInt(String data)throws NumberFormatException {
-		int number = Integer.parseInt(data);
+	public long validateNumber(String data) throws NumberFormatException{
+		long number = Long.parseLong(data);
 		return number;
 	}
 
+	public Date validateDate(String data) throws InvalidReferenceException, ParseException {
+		Date date = null;		
+		if(data.split("/").length != 3) {
+			throw new InvalidReferenceException(data);
+		}
+		SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy"); 
+		date = f.parse(data);
+		
+		return date;
+	}
 
-//	public Integer readInt() {
-//	int number = -1 ;
-//	String line = input.nextLine(); 
-//	try {
-//		number = Integer.parseInt(line);
-//	}catch(NumberFormatException e) {
-//		System.out.println("O valor informado nao eh inteiro: " + line );
-//	}
-//	return number;
-//}
+	public String validateDisciplineReference(String data) throws InvalidReferenceException{
+		String [] dataParts = data.split("-");
+		if(dataParts.length!=2) {
+			throw new InvalidReferenceException(data);
+		}
+		String periodReference = validatePeriodReference(dataParts[1]);
+		return data;
+	}
 	
-	
+	public String validatePeriodReference(String data)throws InvalidReferenceException{
+		
+		String [] dataParts = data.split("/");
+		if(dataParts.length!=2) {
+			throw new InvalidReferenceException(data);
+		}
+		return data;
+	}
+	public String validateTime(String data)throws InvalidReferenceException {
+		String [] dataParts = data.split(":");
+		if(dataParts.length!=2) {
+			throw new InvalidReferenceException(data);
+		}
+		return data;
+		
+	}
+
+	public List<Material> validateMaterials(String data) {
+		
+		List<Material> materials =  new ArrayList<>();
+		String[] dataParts = data.split("[)]");
+		String materialName;
+		String materialLink;
+		for(String dataPart: dataParts) {
+			String [] aux = dataPart.split("[\\]][(]");
+			materialLink = aux[1];
+			materialName = aux[0].replaceAll("\\[", "");
+			materials.add(new Material(materialName,materialLink));	
+		}
+		
+		return materials;
+	}
 	
 
-//	
-//	
-//
-//	
-//	public boolean readResponse() {
-//		char response =  readChar();
-//		if(response == 'S' || response == 's') {
-//			return true;
-//		}
-//		else {
-//			return false;
-//		}
-//	}
-//	public String readString() {
-//		String line = input.nextLine();
-//		return line;
-//	}
-//	
-//	public String readPeriod(){
-//		try {
-//			String period = input.nextLine();
-//			if(period.split("/").length != 2) {
-//				throw new InvalidReferenceException(period);
-//			}
-//			return period;	
-//		}catch(InvalidReferenceException e) {
-//			System.out.println(e.getMessage());
-//		}
-//		return "invalid";
-//	}
+	public Double validateDouble(String data)throws NumberFormatException {
+		double number = Double.parseDouble(data);
+		return number;
+	}
+	
+
+	
+
 
 //	public Double readDouble() {
 //		double number = -1;
@@ -101,24 +123,6 @@ public class DataValidation implements Serializable {
 //		}
 //		return number;
 //	}
-//	public Date readDate(){
-//		Date date =null ;
-//		try{
-//			String line = input.nextLine();
-//			if(line.split("/").length != 3) {
-//				throw new InvalidReferenceException(line);
-//			}
-//			SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy"); 
-//			date = f.parse(line);
-//			
-//		}catch(InvalidReferenceException e) {
-//			System.out.println("Data com formato invalido: "+ e.getReference());
-//		}catch(ParseException e) {
-//			System.out.println("Data invalida" );
-//		}
-//		
-//		
-//		return date;
-//	}
+
 
 }
