@@ -3,13 +3,21 @@ package trabalhoprog3java.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.io.File;
+import java.io.PrintWriter;
+
+
 
 import trabalhoprog3java.controller.util.SortTeachersDisciplines;
 import trabalhoprog3java.controller.util.Utils;
@@ -31,7 +39,6 @@ import trabalhoprog3java.exception.NotCharException;
 import trabalhoprog3java.exception.ReferenceAlredyExistsException;
 
 public class MenuCsv implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 	Map<String, Period> periods;
 	Map<String, Discipline> disciplines;
@@ -39,14 +46,14 @@ public class MenuCsv implements Serializable {
 	Map<String, Teacher> teachers;
 	List<Activity> activities;
 	Utils util;
-	Report report;
+	ReportCsv report;
 	CsvReader input;
 	public Map<String, String> fileList;
 	DataValidation validateData;
 
 	public MenuCsv() throws IOException {
 
-		this.report = new Report();
+		this.report = new ReportCsv();
 		this.periods = new HashMap<>();
 		this.disciplines = new HashMap<>();
 		this.students = new HashMap<>();
@@ -90,34 +97,39 @@ public class MenuCsv implements Serializable {
 		studentsRegister();
 		enrollStudents();
 		activitiesRegister();
+		activitiesRating();
 
-		if (teachers.size() > 0) {
-			System.out.println("\n\nDocentes cadastrados: ");
-			teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
+//		if (teachers.size() > 0) {
+//			System.out.println("\n\nDocentes cadastrados: ");
+//			teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
+//
+//		}
+//		if (periods.size() > 0) {
+//			System.out.println("\n\nPeriodos registrados: ");
+//			periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
+//		}
+//		if (disciplines.size() > 0) {
+//			System.out.println("\n\nDisciplinas cadastradas: ");
+//
+//			disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
+//		}
+//		if (students.size() > 0) {
+//			System.out.println("\n\nEstudantes cadastrados: ");
+//			students.forEach((key, student) -> System.out.println(student.getStudentData()));
+//
+//		}
+//		if (!activities.isEmpty()) {
+//			System.out.println("\n\nAtividades cadastradas: ");
+//			activities.forEach(activity -> System.out.println(activity.getActivityData()));
+//		}
 
-		}
-		if (periods.size() > 0) {
-			System.out.println("\n\nPeriodos registrados: ");
-			periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
-		}
-		if (disciplines.size() > 0) {
-			System.out.println("\n\nDisciplinas cadastradas: ");
+	}
 
-			disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
-		}
-		if (students.size() > 0) {
-			System.out.println("\n\nEstudantes cadastrados: ");
-			students.forEach((key, student) -> System.out.println(student.getStudentData()));
-
-		}
-		if (!activities.isEmpty()) {
-			System.out.println("\n\nAtividades cadastradas: ");
-			activities.forEach(activity -> System.out.println(activity.getActivityData()));
-		}
-		
-			
-		
-		
+	public void generateReports() throws IOException {
+		generatePeriodsReport();
+		generateTeachesReport();
+		generateStudentsReport();
+		generateTeachersReport();
 	}
 
 	public void periodsRegister() throws NumberFormatException, NotAnOptionException, NotCharException,
@@ -273,8 +285,7 @@ public class MenuCsv implements Serializable {
 				discipline.setActivity(study);
 				study.setActivityNumber(discipline.getActivities().size());
 				activities.add(study);
-				
-				
+
 				break;
 
 			case 'P':
@@ -298,17 +309,17 @@ public class MenuCsv implements Serializable {
 				date = validateData.validateDate(activitiesData[3]);
 				int maxNumber = (int) validateData.validateNumber(activitiesData[6]);
 				double workload = (double) validateData.validateDouble(activitiesData[7]);
-				Work work = new Work(name, discipline, date, maxNumber, workload);				
-				
+				Work work = new Work(name, discipline, date, maxNumber, workload);
+
 				discipline.setActivity(work);
-				for(Student student: discipline.getEnrolledStudents()) {
+				for (Student student : discipline.getEnrolledStudents()) {
 					student.setAvaliativeActivities(work);
 				}
-				
+
 				work.setActivityNumber(discipline.getActivities().size());
-	
+
 				activities.add(work);
-				
+
 				break;
 
 			default:
@@ -318,164 +329,71 @@ public class MenuCsv implements Serializable {
 		} while (activitiesData != null);
 	}
 
+	public void activitiesRating() throws IOException, InvalidReferenceException, ActivityAlreadyEvaluatedException {
+		this.input = new CsvReader(this.fileList.get("activitiesRatingFile"));
+		input.nextLine();
+		String[] activitiesRatingData = input.nextLine();
+		do {
+			String disciplineReference = validateData.validateDisciplineReference(activitiesRatingData[0]);
+			long studentReference = validateData.validateNumber(activitiesRatingData[1]);
+			int activityNumber = (int) validateData.validateNumber(activitiesRatingData[2]);
+			double activityGrade = validateData.validateDouble(activitiesRatingData[3]);
 
-//
-//	public void workRegister() throws InvalidReferenceException {
-//
-//		System.out.printf("\nTitulo do trabalho: ");
-//		String name = readData.readString();
-//
-//		System.out.printf("Codigo da disciplina: ");
-//		String disciplineCode = readData.readString();
-//
-//		System.out.printf("Periodo da disciplina: ");
-//		String disciplinePeriod = readData.readString();
-//
-//		Discipline discipline = this.util.findDiscipline(disciplineCode, disciplinePeriod, this.disciplines);
-//		if (discipline == null) {
-//			throw new InvalidReferenceException(disciplineCode + "-" + disciplinePeriod);
-//		} else {
-//
-//			System.out.printf("Data de entrega ( DD/MM/AAAA ): ");
-//			Date date = readData.readDate();
-//			
-//			System.out.printf("Numero maximo de pessoas por grupo: ");
-//			int maxNumber = readData.readInt();
-//
-//			System.out.printf("Carga horaria: ");
-//			double workload = readData.readDouble();
-//
-//			Work work = new Work(name, discipline, date, maxNumber, workload);				
-//			
-//			discipline.setActivity(work);
-//			for(Student student: discipline.getEnrolledStudents()) {
-//				student.setAvaliativeActivities(work);
-//			}
-//			
-//			work.setActivityNumber(discipline.getActivities().size());
-//
-//			activities.add(work);
-//		}
-//
-//	}
+			Discipline discipline = disciplines.get(disciplineReference);
+			if (discipline == null) {
+				throw new InvalidReferenceException(disciplineReference);
+			}
 
-//
-//	public void activityRating() {
-//		try {
-//			printItemOptions("Avaliar atividade\n");
-//			int userDecision = readData.readUserDecision(2); // o usuario possui cinco opcoes de escolha
-//
-//			if (userDecision == 1) {
-//
-//				System.out.printf("\nCodigo de matricula do estudante: ");
-//				int studentCode = readData.readInt();
-//
-//				System.out.printf("Codigo da disciplina: ");
-//				String disciplineCode = readData.readString();
-//
-//				System.out.printf("Periodo da disciplina: ");
-//				String disciplinePeriod = readData.readString();
-//
-//				System.out.printf("\nNumero da atividade: ");
-//				int activityNumber = readData.readInt();
-//
-//				System.out.printf("\nNota para a atividade: ");
-//				double activityGrade = readData.readDouble();
-//
-//				Discipline discipline = util.findDiscipline(disciplineCode, disciplinePeriod, disciplines);
-//				if (discipline == null) {					
-//					throw new InvalidReferenceException(disciplineCode+"-"+disciplinePeriod);
-//				}
-//				else {
-//					Student student = util.findStudent(studentCode, students);
-//					if (student == null) {
-//						throw new InvalidReferenceException(String.valueOf(studentCode));
-//					}
-//					else {
-//						Activity activity = discipline.getActivities().get(activityNumber - 1);
-//						if(activity == null) {
-//							throw new InvalidReferenceException(discipline.getDisciplineReference()+"-"+activityNumber);
-//						}
-//						else {
-//							
-//							if(util.studentAlreadyEvaluatedAtivity(student, activity)) {
-//								throw new ActivityAlreadyEvaluatedException(student.getStudentReference(), activityNumber, discipline.getDisciplineReference());
-//							}
-//							else {
-//								ActivityRating activityRating = new ActivityRating(student, discipline, activityGrade);
-//								student.setEvaluation(activityRating);
-//								activity.setSudentEvaluation(activityRating);
-//								System.out.println("sucesso ao avaliar atividade ");
-//							}
-//							
-//						}
-//						
-//						
-//						
-//					}
-//				}
-//			}
-//
-//		} catch (InvalidReferenceException e) {
-//			System.out.println("Referencia nao cadastrada no sistema: " + e.getReference());
-//		}catch(ActivityAlreadyEvaluatedException e) {
-//			System.out.println(e.getMessage());
-//		}
-//
-//	}
-//
-//	public void report() {
-//		printItemOptions("Visao geral do periodo academico\n" + "Estatisticas dos docentes\n"
-//				+ "Estatisticas dos estudantes\n" + "Estatisticas das disciplinas de um docente\n");
-//
-//		int userDecision = readData.readUserDecision(5); // o usuario possui cinco opcoes de escolha
-//	
-//			switch (userDecision) {
-//
-//			case 1:
-//				System.out.println("\n\nRelatorio geral dos periodos academicos \n");
-//				
-//				List<Period> periodsList = new ArrayList<>(periods.values());
-//				Collections.sort(periodsList);
-//				
-//				for(Period period : periodsList) {
-//					System.out.println("\tDISCIPLINAS ("+period.getPeriodReference()+"): \n");
-//					report.periodsReport(period);
-//				}
-//				util.pressAnyKeyToContinue();
-//				break;
-//
-//			case 2:
-//				System.out.println("\n\n\tEstatisticas dos docentes");
-//				System.out.println("\nPROFESSORES: \n");
-//				
-//				List<Teacher> teachersList = new ArrayList<>(teachers.values());
-//				Collections.sort(teachersList);
-//					
-//				for(Teacher teacher: teachersList) {
-//					report.teachersReport(teacher);
-//				}
-//				
-//				util.pressAnyKeyToContinue();
-//
-//				
-//				break;
-//
-//			case 3:
-//				System.out.println("\n\n\tEstatisticas dos estudantes");
-//				System.out.println("\nEstudantes: \n");
-//
-//				List<Student> studentList = new ArrayList<>(students.values());
-//				Collections.sort(studentList);
-//					
-//				for(Student student: studentList) {
-//					report.studentsReport(student);
-//				}
-//				
-//				util.pressAnyKeyToContinue();
-//				
-//				break;
-//
+			Student student = students.get(studentReference);
+			if (student == null) {
+				throw new InvalidReferenceException(String.valueOf(studentReference));
+			}
+
+			Activity activity = discipline.getActivities().get(activityNumber - 1);
+			if (activity == null) {
+				throw new InvalidReferenceException(discipline.getDisciplineReference() + "-" + activityNumber);
+			}
+
+			if (util.studentAlreadyEvaluatedAtivity(student, activity)) {
+				throw new ActivityAlreadyEvaluatedException(student.getStudentReference(), activityNumber,
+						discipline.getDisciplineReference());
+			} else {
+				ActivityRating activityRating = new ActivityRating(student, discipline, activityGrade);
+				student.setEvaluation(activityRating);
+				activity.setSudentEvaluation(activityRating);
+			}
+			activitiesRatingData = input.nextLine();
+
+		} while (activitiesRatingData != null);
+	}
+
+	
+	public void generatePeriodsReport() throws IOException {	
+		List<Period> periodsList = new ArrayList<>(periods.values());
+		Collections.sort(periodsList);
+		report.periodsReport(periodsList);
+	}
+	public void generateTeachesReport() throws IOException {
+		List<Teacher> teachersList = new ArrayList<>(teachers.values());
+		Collections.sort(teachersList);
+		report.teachersReport(teachersList);
+	}
+	public void generateStudentsReport() throws IOException {
+		List<Student> studentList = new ArrayList<>(students.values());
+		Collections.sort(studentList);
+		report.studentsReport(studentList);
+		
+	}
+	public void generateTeachersReport() throws IOException {
+		List<Discipline> disciplineList = new ArrayList<>(disciplines.values());
+		Collections.sort(disciplineList, new SortTeachersDisciplines());
+		report.disciplinesReport(disciplineList);
+	}
+
+	
+
+	
+
 //			case 4:
 //				System.out.println("\n\nEstatisticas das disciplinas \n");
 //				List<Discipline> disciplineList = new ArrayList<>(disciplines.values());

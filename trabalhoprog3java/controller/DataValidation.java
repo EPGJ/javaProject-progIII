@@ -105,7 +105,7 @@ public class DataValidation implements Serializable {
 	
 
 	public Double validateDouble(String data)throws NumberFormatException {
-		double number = Double.parseDouble(data);
+		double number = Double.parseDouble(data.replace(",", "."));
 		return number;
 	}
 	
