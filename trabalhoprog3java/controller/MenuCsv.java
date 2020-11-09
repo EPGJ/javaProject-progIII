@@ -17,8 +17,6 @@ import java.util.Map;
 import java.io.File;
 import java.io.PrintWriter;
 
-
-
 import trabalhoprog3java.controller.util.SortTeachersDisciplines;
 import trabalhoprog3java.controller.util.Utils;
 import trabalhoprog3java.domain.Discipline;
@@ -43,14 +41,17 @@ public class MenuCsv implements Serializable {
 	Map<String, Period> periods;
 	Map<String, Discipline> disciplines;
 	Map<Long, Student> students;
-	Map<String, Teacher> teachers;
+	public Map<String, Teacher> teachers;
 	List<Activity> activities;
 	Utils util;
 	ReportCsv report;
 	CsvReader input;
+	public boolean readOnly;
+	public boolean writeOnly;
 	public Map<String, String> fileList;
 	DataValidation validateData;
 
+	
 	public MenuCsv() throws IOException {
 
 		this.report = new ReportCsv();
@@ -62,6 +63,8 @@ public class MenuCsv implements Serializable {
 		this.fileList = new HashMap<>();
 		this.validateData = new DataValidation();
 		this.util = new Utils();
+		this.readOnly = false;
+		this.writeOnly = false;
 	}
 
 	public void setFilesList(String[] args) {
@@ -82,8 +85,12 @@ public class MenuCsv implements Serializable {
 			if (args[i].equals("-n"))
 				this.fileList.put("activitiesRatingFile", args[i + 1]);
 			if (args[i].equals("--read-only")) {
+				this.readOnly = true;
+				System.out.println("read only!");
 			}
 			if (args[i].equals("--write-only")) {
+				this.writeOnly = true;
+				System.out.println("write only!");
 			}
 		}
 	}
@@ -98,30 +105,6 @@ public class MenuCsv implements Serializable {
 		enrollStudents();
 		activitiesRegister();
 		activitiesRating();
-
-//		if (teachers.size() > 0) {
-//			System.out.println("\n\nDocentes cadastrados: ");
-//			teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
-//
-//		}
-//		if (periods.size() > 0) {
-//			System.out.println("\n\nPeriodos registrados: ");
-//			periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
-//		}
-//		if (disciplines.size() > 0) {
-//			System.out.println("\n\nDisciplinas cadastradas: ");
-//
-//			disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
-//		}
-//		if (students.size() > 0) {
-//			System.out.println("\n\nEstudantes cadastrados: ");
-//			students.forEach((key, student) -> System.out.println(student.getStudentData()));
-//
-//		}
-//		if (!activities.isEmpty()) {
-//			System.out.println("\n\nAtividades cadastradas: ");
-//			activities.forEach(activity -> System.out.println(activity.getActivityData()));
-//		}
 
 	}
 
@@ -367,47 +350,59 @@ public class MenuCsv implements Serializable {
 		} while (activitiesRatingData != null);
 	}
 
-	
-	public void generatePeriodsReport() throws IOException {	
+	public void generatePeriodsReport() throws IOException {
 		List<Period> periodsList = new ArrayList<>(periods.values());
 		Collections.sort(periodsList);
 		report.periodsReport(periodsList);
 	}
+
 	public void generateTeachesReport() throws IOException {
 		List<Teacher> teachersList = new ArrayList<>(teachers.values());
 		Collections.sort(teachersList);
 		report.teachersReport(teachersList);
 	}
+
 	public void generateStudentsReport() throws IOException {
 		List<Student> studentList = new ArrayList<>(students.values());
 		Collections.sort(studentList);
 		report.studentsReport(studentList);
-		
+
 	}
+
 	public void generateTeachersReport() throws IOException {
 		List<Discipline> disciplineList = new ArrayList<>(disciplines.values());
 		Collections.sort(disciplineList, new SortTeachersDisciplines());
 		report.disciplinesReport(disciplineList);
 	}
-
-	
-
-	
-
-//			case 4:
-//				System.out.println("\n\nEstatisticas das disciplinas \n");
-//				List<Discipline> disciplineList = new ArrayList<>(disciplines.values());
-//				Collections.sort(disciplineList, new SortTeachersDisciplines());
-//				
-//				
-//				for(Discipline discipline: disciplineList) {
-//					report.disciplinesReport(discipline);
-//				}
-//				
-//				util.pressAnyKeyToContinue();
-//				break;
-//			}	
-//
-//	}
+	public void serialize() {
+		this.util.serialize(this);
+	}
+	public MenuCsv deserialize() {
+		return this.util.deserialize();
+	}
 
 }
+
+//if (teachers.size() > 0) {
+//System.out.println("\n\nDocentes cadastrados: ");
+//teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
+//
+//}
+//if (periods.size() > 0) {
+//System.out.println("\n\nPeriodos registrados: ");
+//periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
+//}
+//if (disciplines.size() > 0) {
+//System.out.println("\n\nDisciplinas cadastradas: ");
+//
+//disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
+//}
+//if (students.size() > 0) {
+//System.out.println("\n\nEstudantes cadastrados: ");
+//students.forEach((key, student) -> System.out.println(student.getStudentData()));
+//
+//}
+//if (!activities.isEmpty()) {
+//System.out.println("\n\nAtividades cadastradas: ");
+//activities.forEach(activity -> System.out.println(activity.getActivityData()));
+//}
