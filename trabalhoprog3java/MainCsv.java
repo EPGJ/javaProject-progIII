@@ -21,16 +21,16 @@ public class MainCsv implements Serializable {
 			} else {
 				if (menu.writeOnly) {
 					menu = menu.deserialize();
+				}else {
+					menu.readFiles();
 				}
 				menu.generateReports();
 			}
 
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println(e + "Erro ao ler os parametros de entrada");
-		} catch (IOException e) {
-			System.out.println("Erro de I/O " + e.getMessage());
+		}catch (IOException | ClassNotFoundException e) {
+			System.out.println("Erro de I/O ");
 		} catch (Exception e) {
-			System.out.println(e);
+			System.out.println(e.getMessage());
 		}
 
 	}

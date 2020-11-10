@@ -31,6 +31,7 @@ import trabalhoprog3java.domain.activity.evaluative.Work;
 import trabalhoprog3java.domain.activity.study.Material;
 import trabalhoprog3java.domain.activity.study.Study;
 import trabalhoprog3java.exception.ActivityAlreadyEvaluatedException;
+import trabalhoprog3java.exception.InputMismatchException;
 import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.NotAnOptionException;
 import trabalhoprog3java.exception.NotCharException;
@@ -70,19 +71,19 @@ public class MenuCsv implements Serializable {
 	public void setFilesList(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 
-			if (args[i].equals("-p"))
+			if (args[i].equals("-p") && args.length >i+1)
 				this.fileList.put("periodsFile", args[i + 1]);
-			if (args[i].equals("-d"))
+			if (args[i].equals("-d")&& args.length >i+1)
 				this.fileList.put("teachersFile", args[i + 1]);
-			if (args[i].equals("-o"))
+			if (args[i].equals("-o")&& args.length >i+1)
 				this.fileList.put("disciplinesFile", args[i + 1]);
-			if (args[i].equals("-e"))
+			if (args[i].equals("-e")&& args.length >i+1)
 				this.fileList.put("studentsFile", args[i + 1]);
-			if (args[i].equals("-m"))
+			if (args[i].equals("-m")&& args.length >i+1)
 				this.fileList.put("enrollmentsFile", args[i + 1]);
-			if (args[i].equals("-a"))
+			if (args[i].equals("-a")&& args.length >i+1)
 				this.fileList.put("activitiesFile", args[i + 1]);
-			if (args[i].equals("-n"))
+			if (args[i].equals("-n")&& args.length >i+1)
 				this.fileList.put("activitiesRatingFile", args[i + 1]);
 			if (args[i].equals("--read-only")) {
 				this.readOnly = true;
@@ -105,7 +106,7 @@ public class MenuCsv implements Serializable {
 		enrollStudents();
 		activitiesRegister();
 		activitiesRating();
-
+		
 	}
 
 	public void generateReports() throws IOException {
@@ -114,9 +115,11 @@ public class MenuCsv implements Serializable {
 		generateStudentsReport();
 		generateTeachersReport();
 	}
+	
+	
 
 	public void periodsRegister() throws NumberFormatException, NotAnOptionException, NotCharException,
-			ReferenceAlredyExistsException, IOException {
+			ReferenceAlredyExistsException, IOException, InputMismatchException {
 		this.input = new CsvReader(this.fileList.get("periodsFile"));
 		input.nextLine(); // limpa cabecalho
 		String[] periodData = input.nextLine();
@@ -142,19 +145,18 @@ public class MenuCsv implements Serializable {
 
 			String login = validateData.validateLogin(teacherData[0]);
 			String fullName = teacherData[1];
-			Teacher teacher;
-			if (teacherData[2] != null) {
-				String webPage = teacherData[2];
-				teacher = new Teacher(login, fullName, webPage);
-			} else {
-				teacher = new Teacher(login, fullName);
-			}
-
+			Teacher teacher = null;
+			String webPage = teacherData[2];
+			teacher = new Teacher(login, fullName, webPage);		
+			
 			if (teachers.get(teacher.getTeacherReference()) != null) {
 				throw new ReferenceAlredyExistsException(teacher.getTeacherReference());
 			}
 			teachers.put(teacher.getTeacherReference(), teacher);
 			teacherData = input.nextLine();
+			
+			
+			
 		} while (teacherData != null);
 
 	}
@@ -164,7 +166,7 @@ public class MenuCsv implements Serializable {
 		input.nextLine();
 		String[] disciplineData = input.nextLine();
 		do {
-			String periodReference = disciplineData[0];
+			String periodReference = validateData.validatePeriodReference(disciplineData[0]);
 			String code = disciplineData[1];
 			String name = disciplineData[2];
 			String responsableTeacher = validateData.validateLogin(disciplineData[3]);
@@ -189,7 +191,7 @@ public class MenuCsv implements Serializable {
 		} while (disciplineData != null);
 	}
 
-	public void studentsRegister() throws IOException, ReferenceAlredyExistsException, NumberFormatException {
+	public void studentsRegister() throws IOException, ReferenceAlredyExistsException, InputMismatchException {
 		this.input = new CsvReader(this.fileList.get("studentsFile"));
 		input.nextLine();
 		String[] studentsData = input.nextLine();
@@ -207,12 +209,12 @@ public class MenuCsv implements Serializable {
 		} while (studentsData != null);
 	}
 
-	public void enrollStudents() throws IOException, InvalidReferenceException, ReferenceAlredyExistsException {
+	public void enrollStudents() throws IOException, InvalidReferenceException, ReferenceAlredyExistsException, InputMismatchException {
 		this.input = new CsvReader(this.fileList.get("enrollmentsFile"));
 		input.nextLine();
 		String[] enrollmentsData = input.nextLine();
 		do {
-			String disciplineReference = enrollmentsData[0];
+			String disciplineReference = validateData.validateDisciplineReference(enrollmentsData[0]);
 			long studentReference = validateData.validateNumber(enrollmentsData[1]);
 			Discipline discipline = disciplines.get(disciplineReference);
 			if (discipline == null) {
@@ -233,7 +235,7 @@ public class MenuCsv implements Serializable {
 		} while (enrollmentsData != null);
 	}
 
-	public void activitiesRegister() throws IOException, NotCharException, InvalidReferenceException, ParseException {
+	public void activitiesRegister() throws IOException, NotCharException, InvalidReferenceException, InputMismatchException {
 		this.input = new CsvReader(this.fileList.get("activitiesFile"));
 		input.nextLine();
 		String[] activitiesData = input.nextLine();
@@ -312,7 +314,7 @@ public class MenuCsv implements Serializable {
 		} while (activitiesData != null);
 	}
 
-	public void activitiesRating() throws IOException, InvalidReferenceException, ActivityAlreadyEvaluatedException {
+	public void activitiesRating() throws IOException, InvalidReferenceException, ActivityAlreadyEvaluatedException, InputMismatchException {
 		this.input = new CsvReader(this.fileList.get("activitiesRatingFile"));
 		input.nextLine();
 		String[] activitiesRatingData = input.nextLine();
@@ -381,28 +383,29 @@ public class MenuCsv implements Serializable {
 		return this.util.deserialize();
 	}
 
+	
 }
 
-//if (teachers.size() > 0) {
-//System.out.println("\n\nDocentes cadastrados: ");
-//teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
-//
-//}
 //if (periods.size() > 0) {
-//System.out.println("\n\nPeriodos registrados: ");
-//periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
+//	System.out.println("\n\nPeriodos registrados: ");
+//	periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
+//}
+//if (teachers.size() > 0) {
+//	System.out.println("\n\nDocentes cadastrados: ");
+//	teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
+//
 //}
 //if (disciplines.size() > 0) {
-//System.out.println("\n\nDisciplinas cadastradas: ");
-//
-//disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
+//	System.out.println("\n\nDisciplinas cadastradas: ");
+//	disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
 //}
 //if (students.size() > 0) {
-//System.out.println("\n\nEstudantes cadastrados: ");
-//students.forEach((key, student) -> System.out.println(student.getStudentData()));
-//
+//	System.out.println("\n\nDisciplinas cadastradas: ");
+//	students.forEach((key, student) -> System.out.println(student.getStudentData()));
 //}
-//if (!activities.isEmpty()) {
-//System.out.println("\n\nAtividades cadastradas: ");
-//activities.forEach(activity -> System.out.println(activity.getActivityData()));
+//if (activities.size() > 0) {
+//	System.out.println("\n\nDisciplinas cadastradas: ");
+//	activities.forEach( activity -> System.out.println(activity.getActivityData()));
 //}
+
+

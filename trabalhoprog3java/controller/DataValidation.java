@@ -11,21 +11,26 @@ import java.util.Scanner;
 
 
 import trabalhoprog3java.domain.activity.study.Material;
+import trabalhoprog3java.exception.InputMismatchException;
 import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.NotAnOptionException;
 import trabalhoprog3java.exception.NotCharException;
 
 public class DataValidation implements Serializable {
 
-	public Integer validateYear(String data) throws NumberFormatException, NotAnOptionException {
+	public Integer validateYear(String data) throws InputMismatchException, NotAnOptionException  {
 		int year = 0;
-		year = Integer.parseInt(data);
-		if (year <= 0) {
-			throw new NotAnOptionException(year);
-		}
-		else {			
+		try {
+			year = Integer.parseInt(data);
+			if(year <= 0) {
+				throw new NotAnOptionException(year);
+			}
 			return year;
+			
+		}catch(NumberFormatException e) {
+			throw new InputMismatchException(data);
 		}
+		
 	}
 
 	public char validateChar(String data) throws NotCharException {
@@ -45,18 +50,27 @@ public class DataValidation implements Serializable {
 		}
 	}
 
-	public long validateNumber(String data) throws NumberFormatException{
-		long number = Long.parseLong(data);
-		return number;
+	public long validateNumber(String data) throws InputMismatchException{
+		try {
+			long number = Long.parseLong(data);
+			return number;
+		}catch(NumberFormatException e) {
+			throw new InputMismatchException(data);
+		}		
 	}
 
-	public Date validateDate(String data) throws InvalidReferenceException, ParseException {
+	public Date validateDate(String data) throws InvalidReferenceException, InputMismatchException{
 		Date date = null;		
 		if(data.split("/").length != 3) {
 			throw new InvalidReferenceException(data);
 		}
 		SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy"); 
-		date = f.parse(data);
+		try {
+			date = f.parse(data);
+		}catch(ParseException e) {
+			throw new InputMismatchException(data);
+		}
+		
 		
 		return date;
 	}
@@ -110,19 +124,6 @@ public class DataValidation implements Serializable {
 	}
 	
 
-	
-
-
-//	public Double readDouble() {
-//		double number = -1;
-//		try {		
-//			number = input.nextDouble();
-//			clearBuffer();
-//		}catch(NumberFormatException e) {
-//			System.out.println(e.getMessage());
-//		}
-//		return number;
-//	}
 
 
 }
