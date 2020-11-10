@@ -114,8 +114,6 @@ public class ReportCsv implements Serializable {
 			pw.printf("%s",activitiesData.trim());
 			pw.printf("%n");
 
-
-
 		}
 
 		pw.close();

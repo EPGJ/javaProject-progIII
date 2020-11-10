@@ -62,7 +62,7 @@ public class DataValidation implements Serializable {
 	public Date validateDate(String data) throws InvalidReferenceException, InputMismatchException{
 		Date date = null;		
 		if(data.split("/").length != 3) {
-			throw new InvalidReferenceException(data);
+			throw new InputMismatchException(data);
 		}
 		SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy"); 
 		try {
@@ -118,9 +118,14 @@ public class DataValidation implements Serializable {
 	}
 	
 
-	public Double validateDouble(String data)throws NumberFormatException {
+	public Double validateDouble(String data)throws NumberFormatException, InputMismatchException {
+	try{
 		double number = Double.parseDouble(data.replace(",", "."));
 		return number;
+	}catch(NumberFormatException e) {
+		throw new InputMismatchException(data);
+	}
+		
 	}
 	
 

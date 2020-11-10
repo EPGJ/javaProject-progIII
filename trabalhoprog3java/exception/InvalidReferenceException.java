@@ -6,7 +6,7 @@ public class InvalidReferenceException extends Exception  implements Serializabl
 	private String reference;
 	
 	public InvalidReferenceException(String reference) {
-		super("Referencia invalida: " + reference);
+		super("Referência inválida: " + reference+".");
 		this.reference= reference;
 	}
 

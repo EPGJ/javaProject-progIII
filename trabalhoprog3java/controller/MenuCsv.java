@@ -36,6 +36,7 @@ import trabalhoprog3java.exception.InvalidReferenceException;
 import trabalhoprog3java.exception.NotAnOptionException;
 import trabalhoprog3java.exception.NotCharException;
 import trabalhoprog3java.exception.ReferenceAlredyExistsException;
+import trabalhoprog3java.exception.StudentAlreadyEnrolledException;
 
 public class MenuCsv implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -97,7 +98,6 @@ public class MenuCsv implements Serializable {
 	}
 
 	public void readFiles() throws IOException, Exception {
-		String path = "../Testes/01/in/";
 
 		periodsRegister();
 		teachersRegister();
@@ -157,6 +157,7 @@ public class MenuCsv implements Serializable {
 			
 			
 			
+			
 		} while (teacherData != null);
 
 	}
@@ -209,7 +210,7 @@ public class MenuCsv implements Serializable {
 		} while (studentsData != null);
 	}
 
-	public void enrollStudents() throws IOException, InvalidReferenceException, ReferenceAlredyExistsException, InputMismatchException {
+	public void enrollStudents() throws IOException, InvalidReferenceException, ReferenceAlredyExistsException, InputMismatchException, StudentAlreadyEnrolledException {
 		this.input = new CsvReader(this.fileList.get("enrollmentsFile"));
 		input.nextLine();
 		String[] enrollmentsData = input.nextLine();
@@ -227,7 +228,7 @@ public class MenuCsv implements Serializable {
 			}
 
 			if (util.isEnrolled(discipline, student)) {
-				throw new ReferenceAlredyExistsException(Long.toString(student.getStudentReference()));
+				throw new StudentAlreadyEnrolledException(student.getStudentReference(), disciplineReference);
 			}
 			student.setAssociatedDiscipline(discipline);
 			discipline.enrollStudent(student);
@@ -314,6 +315,7 @@ public class MenuCsv implements Serializable {
 		} while (activitiesData != null);
 	}
 
+	
 	public void activitiesRating() throws IOException, InvalidReferenceException, ActivityAlreadyEvaluatedException, InputMismatchException {
 		this.input = new CsvReader(this.fileList.get("activitiesRatingFile"));
 		input.nextLine();
@@ -333,21 +335,26 @@ public class MenuCsv implements Serializable {
 			if (student == null) {
 				throw new InvalidReferenceException(String.valueOf(studentReference));
 			}
+			try {
+				Activity activity = discipline.getActivities().get(activityNumber - 1);
+				if (activity == null) {
+					throw new InvalidReferenceException(discipline.getDisciplineReference() + "-" + activityNumber);
+				}
 
-			Activity activity = discipline.getActivities().get(activityNumber - 1);
-			if (activity == null) {
-				throw new InvalidReferenceException(discipline.getDisciplineReference() + "-" + activityNumber);
+				if (util.studentAlreadyEvaluatedAtivity(student, activity)) {
+					throw new ActivityAlreadyEvaluatedException(student.getStudentReference(), activityNumber,
+							discipline.getDisciplineReference());
+				} else {
+					ActivityRating activityRating = new ActivityRating(student, discipline, activityGrade);
+					student.setEvaluation(activityRating);
+					activity.setSudentEvaluation(activityRating);
+				}
+				activitiesRatingData = input.nextLine();
+			}catch(IndexOutOfBoundsException e){
+				throw new InvalidReferenceException(activityNumber+"");
 			}
-
-			if (util.studentAlreadyEvaluatedAtivity(student, activity)) {
-				throw new ActivityAlreadyEvaluatedException(student.getStudentReference(), activityNumber,
-						discipline.getDisciplineReference());
-			} else {
-				ActivityRating activityRating = new ActivityRating(student, discipline, activityGrade);
-				student.setEvaluation(activityRating);
-				activity.setSudentEvaluation(activityRating);
-			}
-			activitiesRatingData = input.nextLine();
+		
+			
 
 		} while (activitiesRatingData != null);
 	}
@@ -386,26 +393,6 @@ public class MenuCsv implements Serializable {
 	
 }
 
-//if (periods.size() > 0) {
-//	System.out.println("\n\nPeriodos registrados: ");
-//	periods.forEach((key, period) -> System.out.println(period.getPeriodData()));
-//}
-//if (teachers.size() > 0) {
-//	System.out.println("\n\nDocentes cadastrados: ");
-//	teachers.forEach((key, teacher) -> System.out.println(teacher.getTeacherData()));
-//
-//}
-//if (disciplines.size() > 0) {
-//	System.out.println("\n\nDisciplinas cadastradas: ");
-//	disciplines.forEach((key, discipline) -> System.out.println(discipline.getDisciplineData()));
-//}
-//if (students.size() > 0) {
-//	System.out.println("\n\nDisciplinas cadastradas: ");
-//	students.forEach((key, student) -> System.out.println(student.getStudentData()));
-//}
-//if (activities.size() > 0) {
-//	System.out.println("\n\nDisciplinas cadastradas: ");
-//	activities.forEach( activity -> System.out.println(activity.getActivityData()));
-//}
+
 
 

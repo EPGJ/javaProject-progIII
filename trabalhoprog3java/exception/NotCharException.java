@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class NotCharException extends Exception  implements Serializable  {
 
 	public NotCharException(String line){
-		super("Dado inválido: " + line);
+		super("Dado inválido: " + line+".");
 	}
 	
 }

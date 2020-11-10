@@ -6,7 +6,7 @@ public class ReferenceAlredyExistsException extends Exception  implements Serial
 	private String reference;
 	
 	public ReferenceAlredyExistsException(String reference){
-		super("Cadastro repetido: " + reference);
+		super("Cadastro repetido: " + reference+".");
 		this.reference = reference;
 	}
 

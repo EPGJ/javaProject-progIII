@@ -28,9 +28,10 @@ public class MainCsv implements Serializable {
 			}
 
 		}catch (IOException | ClassNotFoundException e) {
-			System.out.println("Erro de I/O ");
+			System.out.println("Erro de I/O.");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+			//e.printStackTrace();
 		}
 
 	}

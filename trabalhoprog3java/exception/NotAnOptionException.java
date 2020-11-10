@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class NotAnOptionException extends Exception  implements Serializable {
 
 	public NotAnOptionException(int option){
-		super("Dado inválido: " + option);
+		super("Dado inválido: " + option+".");
 	}
 	
 }

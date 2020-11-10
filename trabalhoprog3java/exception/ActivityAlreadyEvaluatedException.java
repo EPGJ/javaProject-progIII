@@ -8,7 +8,7 @@ public class ActivityAlreadyEvaluatedException extends Exception  implements Ser
 	private String disciplineReference;
 	
 	public ActivityAlreadyEvaluatedException(long studentReference,int activityNumber,String disciplineReference ) {
-		super("Avaliacao repetida: estudante " + studentReference + " para atividade " + activityNumber + " de " + disciplineReference );
+		super("Avaliação repetida: estudante " + studentReference + " para atividade " + activityNumber + " de " + disciplineReference+".");
 		this.studentReference = studentReference;
 		this.activityReference = activityNumber;
 		this.disciplineReference = disciplineReference;
